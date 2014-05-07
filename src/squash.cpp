@@ -4,6 +4,8 @@
 #include "SpookyV2.h"
 #include "lz4.h"
 
+#include "simple_store.h"
+
 using namespace std;
 
 void hash_example() {
@@ -45,8 +47,22 @@ void compress_example() {
 	cout << "##### End Compress Example" << endl;
 }
 
+void store_example() {
+	SimpleStore store;
+	store.put("hi", "hello");
+	char value[100];
+	int size = store.get("hi", value);
+	if (size > 0) {
+		value[size] = '\0';
+		cout << value << endl;
+	}
+	cout << store.get("h1", value) << endl;
+}
+
 int main() {
 	hash_example();
 	compress_example();
+	store_example();
+
 	return 0;
 }
