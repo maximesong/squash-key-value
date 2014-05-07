@@ -8,7 +8,7 @@ PROGRAM=squash
 
 all: $(PROGRAM)
 
-$(PROGRAM): squash.cpp spooky.o lz4.o
+$(PROGRAM): src/squash.cpp spooky.o lz4.o
 	clang++ $(INCLUDE_FLAG) $^ -o $@
 
 spooky.o: lib/SpookyV2.cpp
