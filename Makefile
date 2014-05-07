@@ -1,9 +1,21 @@
 CC=clang++
 
-all: squash
+LIB_INCLUDE_DIR=lib/include
 
-squash: squash.cpp spooky.o
-	clang++ -I lib/include $^ -o $@
+INCLUDE_FLAG=-I $(LIB_INCLUDE_DIR)
+
+PROGRAM=squash
+
+all: $(PROGRAM)
+
+$(PROGRAM): squash.cpp spooky.o lz4.o
+	clang++ $(INCLUDE_FLAG) $^ -o $@
 
 spooky.o: lib/SpookyV2.cpp
-	clang++ -c -I lib/include $< -o $@
+	clang++ $(INCLUDE_FLAG) -c $< -o $@
+
+lz4.o: lib/lz4.c
+	clang $(INCLUDE_FLAG) -c $< -o $@
+
+clean:
+	rm -f $(PROGRAM) *.o
