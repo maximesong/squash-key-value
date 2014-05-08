@@ -27,6 +27,12 @@ public:
 	virtual int put(const char* key, const char *value, int len);
 
 private:
-	map<const char*, const char*,
+    typedef struct {
+        bool compressed;
+        int temp;
+        const char *value;
+    } info;
+
+	map<const char*, info,
 	    std::function<bool(const char*, const char*)>> store;
 };
