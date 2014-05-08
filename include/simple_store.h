@@ -1,16 +1,13 @@
-#include <map>
 #include <functional>
 
+#include <tr1/unordered_map>
+#define hash_map std::tr1::unordered_map
 #include "store.h"
 
 using namespace std;
 
 class SimpleStore : public Store {
 public:
-	SimpleStore(): store([](const char* a, const char* b) {
-			return strcmp(a, b) == -1;
-		}) {
-	}
 	/**
 	 * @return the size of the value, or -1 if the value it not available
 	 */
@@ -30,9 +27,9 @@ private:
     typedef struct {
         bool compressed;
         int temp;
+        int last_atime;
         const char *value;
     } info;
 
-	map<const char*, info,
-	    std::function<bool(const char*, const char*)>> store;
+    hash_map<const char*, info> store;
 };
