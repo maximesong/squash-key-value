@@ -23,11 +23,13 @@ public:
 	 */
 	virtual int put(const char* key, const char *value, int len);
 
+    unsigned long long getTime(void);
+
 private:
     typedef struct {
         bool compressed;
         int temp;
-        int last_atime;
+        long int last_atime;
         const char *value;
     } info;
 
