@@ -4,20 +4,20 @@
 
 using namespace std;
 
-int SimpleStore::get(const char* key, char *value) {
+int SimpleStore::get(const char* key, char *dest) {
 	if (store.count(key)) {
-		const char *source = store[key];
-		int size = strlen(source);
-		memcpy(value, source, size);		
-		return size;
+		return store[key]->getData(dest);
 	} else {
 		return -1;
 	}
 }
 
 
-int SimpleStore::put(const char* key, const char *value, int len) {
-	store[key] = value;
+int SimpleStore::put(const char* key, const char *value, int size) {
+	if (store.count(key)) {
+		store[key]->setData(value, size);
+	} else {
+		store[key] = new SimpleDataBlock(value, size);
+	}
 	return 0;
 }
-

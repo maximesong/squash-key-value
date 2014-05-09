@@ -49,7 +49,7 @@ void compress_example() {
 
 void store_example() {
 	SimpleStore store;
-	store.put("hi", "hello");
+	store.put_str("hi", "hello");
 	char value[100];
 	int size = store.get("hi", value);
 	if (size > 0) {
