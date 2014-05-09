@@ -13,6 +13,13 @@ public:
 			return strcmp(a, b) < 0;
 		}) {
 	}
+
+	~ SimpleStore() {
+		for (auto e : store) {
+			delete e.second;
+		}
+	}
+
 	/**
 	 * @return the size of the value, or -1 if the value it not available
 	 */
