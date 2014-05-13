@@ -18,7 +18,6 @@ int ComplexStore::get(const char* key, char *value) {
         const char *source;
 
         if(store[key].compressed == true){
-            /**
             cout<<"decompressing..."<<endl;
             char decompressed[1024];
             int compressed_size = store[key].compressed_size;
@@ -26,15 +25,11 @@ int ComplexStore::get(const char* key, char *value) {
             decompressed[decompressed_size] = '\0';
             cout<<"compressed_size:"<<compressed_size<<endl;
             cout<<"decompressed_size:"<<decompressed_size<<endl;
-            source = decompressed;
-            **/
-            source = store[key].value;
+            memcpy(&store[key].value, decompressed, decompressed_size);
             store[key].compressed = false;
-            store[key].value = source;
             hot_list.push_front(key);
-        }else{
-		   source = store[key].value;
         }
+		source = store[key].value;
 		int size = strlen(source);
 		memcpy(value, source, size);		
 
@@ -69,17 +64,15 @@ int ComplexStore::put(const char* key, const char *value, int len) {
     new_info.compressed = true;
     new_info.temp = INITIAL_TEMP;
     new_info.last_atime =  this->getTime();
-    /**
     char compressed[1024]; 
     cout<<"raw_value="<<value<<endl;
     int source_size = strlen(value);
     int compressed_size = LZ4_compress(value, compressed, source_size);
     compressed[compressed_size] = '\0';
     cout<<"compressed text: "<<compressed<<endl;
-    new_info.value = compressed;
+    memcpy(&new_info.value, compressed, compressed_size);
     new_info.compressed_size = compressed_size;
-    **/
-    new_info.value = value;
+    //new_info.value = value;
 	store[key] = new_info;
 	return 0;
 }
