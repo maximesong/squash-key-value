@@ -10,6 +10,8 @@ CPP_FLAGS=-std=c++11
 
 PROGRAM=squash
 
+objects=spooky.o lz4.o simple_store.o simple_data_block.o
+
 all: $(PROGRAM)
 
 $(PROGRAM): src/squash.cpp spooky.o lz4.o complex_store.o
@@ -24,6 +26,8 @@ lz4.o: lib/lz4.c
 complex_store.o: src/complex_store.cpp
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
 
+simple_data_block.o: src/simple_data_block.cpp
+	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
 
 clean:
 	rm -f $(PROGRAM) *.o

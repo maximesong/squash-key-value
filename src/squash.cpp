@@ -54,6 +54,7 @@ void store_example() {
     store.put("b","234567");
     store.put("c","345678");
     store.put("d","456789");
+
 	char value[100];
     //sleep(5);
 	int size = store.get("hi", value);
