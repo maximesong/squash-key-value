@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string.h>
+#include <unistd.h>
 
 #include "SpookyV2.h"
 #include "lz4.h"
-
 #include "complex_store.h"
 
 using namespace std;
@@ -49,19 +49,66 @@ void compress_example() {
 
 void store_example() {
 	ComplexStore store;
-	store.put("hi", "hello");
+	store.put("hi", "012345");
+    store.put("a","123456");
+    store.put("b","234567");
+    store.put("c","345678");
+    store.put("d","456789");
 	char value[100];
+    //sleep(5);
 	int size = store.get("hi", value);
 	if (size > 0) {
 		value[size] = '\0';
 		cout << value << endl;
 	}
-	cout << store.get("h1", value) << endl;
+	
+    //cout << store.get("h1", value) << endl;
+    
+    sleep(2);    
+	size = store.get("a", value);
+	if (size > 0) {
+		value[size] = '\0';
+		cout << value << endl;
+	}
+    sleep(2); 
+	size = store.get("b", value);
+	if (size > 0) {
+		value[size] = '\0';
+		cout << value << endl;
+	}
+    sleep(3);    
+	size = store.get("a", value);
+	if (size > 0) {
+		value[size] = '\0';
+		cout << value << endl;
+	}
+    
+	size = store.get("a", value);
+	if (size > 0) {
+		value[size] = '\0';
+		cout << value << endl;
+	}
+	size = store.get("a", value);
+	if (size > 0) {
+		value[size] = '\0';
+		cout << value << endl;
+	}
+    sleep(3);    
+	size = store.get("b", value);
+	if (size > 0) {
+		value[size] = '\0';
+		cout << value << endl;
+	}
+	size = store.get("hi", value);
+	if (size > 0) {
+		value[size] = '\0';
+		cout << value << endl;
+    }
 }
 
 int main() {
-	hash_example();
-	compress_example();
+//	hash_example();
+//	compress_example();
 	store_example();
 
 	return 0;

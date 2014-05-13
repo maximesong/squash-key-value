@@ -1,5 +1,5 @@
 #include <functional>
-
+#include <list>
 #include <tr1/unordered_map>
 #define hash_map std::tr1::unordered_map
 #include "store.h"
@@ -25,13 +25,21 @@ public:
 
     unsigned long long getTime(void);
 
+    double calcTemp(double temp,int time);
+
+    void compressing(void);
+
 private:
     typedef struct {
         bool compressed;
-        int temp;
-        long int last_atime;
+        double temp;
+        unsigned long long last_atime;
+        int compressed_size;
         const char *value;
     } info;
 
     hash_map<const char*, info> store;
+
+    unsigned long long last_compressed_time = 0;
+    list<const char*> hot_list;
 };
