@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class SimpleStore : public Store {
+class ComplexStore : public Store {
 public:
 	/**
 	 * @return the size of the value, or -1 if the value it not available
@@ -15,7 +15,7 @@ public:
 
 
 	virtual int put(const char* key, const char *value) {
-		return put(key, value, strlen(value));
+		return put(key, value, strlen(value)+1);
 	}
 
 	/**

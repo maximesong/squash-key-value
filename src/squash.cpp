@@ -4,7 +4,7 @@
 #include "SpookyV2.h"
 #include "lz4.h"
 
-#include "simple_store.h"
+#include "complex_store.h"
 
 using namespace std;
 
@@ -48,7 +48,7 @@ void compress_example() {
 }
 
 void store_example() {
-	SimpleStore store;
+	ComplexStore store;
 	store.put("hi", "hello");
 	char value[100];
 	int size = store.get("hi", value);
