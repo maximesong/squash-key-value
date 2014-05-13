@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <string.h>
 #include <unistd.h>
@@ -7,6 +8,8 @@
 #include "complex_store.h"
 
 using namespace std;
+
+const char *PID_FILENAME="squash.pid";
 
 void hash_example() {
 	cout << "##### Start Hash Example" << endl;
@@ -107,10 +110,22 @@ void store_example() {
     }
 }
 
+void write_pid() {
+	fstream fout(PID_FILENAME, ios_base::out | ios_base::trunc);
+	fout << getpid() << endl;
+}
+
+void remove_pid() {
+	remove(PID_FILENAME);
+}
+
 int main() {
-//	hash_example();
-//	compress_example();
+	write_pid();
+
+	hash_example();
+	compress_example();
 	store_example();
 
+	remove_pid();
 	return 0;
 }
