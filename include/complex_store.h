@@ -1,5 +1,6 @@
 #include <functional>
 #include <list>
+#include <string.h>
 #include <tr1/unordered_map>
 #define hash_map std::tr1::unordered_map
 #include "store.h"

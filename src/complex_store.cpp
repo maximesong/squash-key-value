@@ -70,6 +70,7 @@ int ComplexStore::put(const char* key, const char *value, int len) {
     int compressed_size = LZ4_compress(value, compressed, source_size);
     compressed[compressed_size] = '\0';
     cout<<"compressed text: "<<compressed<<endl;
+    new_info.value = new char[compressed_size];
     memcpy(&new_info.value, compressed, compressed_size);
     new_info.compressed_size = compressed_size;
     //new_info.value = value;
