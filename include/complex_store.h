@@ -36,7 +36,7 @@ private:
         double temp;
         unsigned long long last_atime;
         int compressed_size;
-        const char *value;
+        char *value;
     } info;
 
     hash_map<const char*, info> store;

@@ -22,10 +22,10 @@ int ComplexStore::get(const char* key, char *value) {
             char decompressed[1024];
             int compressed_size = store[key].compressed_size;
 	        int decompressed_size = LZ4_decompress_safe(store[key].value, decompressed,compressed_size,1024);
-            decompressed[decompressed_size] = '\0';
             cout<<"compressed_size:"<<compressed_size<<endl;
             cout<<"decompressed_size:"<<decompressed_size<<endl;
-            memcpy(&store[key].value, decompressed, decompressed_size);
+            memcpy(store[key].value, decompressed, decompressed_size);
+            store[key].value[decompressed_size] = '\0';
             store[key].compressed = false;
             hot_list.push_front(key);
         }
@@ -68,10 +68,10 @@ int ComplexStore::put(const char* key, const char *value, int len) {
     cout<<"raw_value="<<value<<endl;
     int source_size = strlen(value);
     int compressed_size = LZ4_compress(value, compressed, source_size);
-    compressed[compressed_size] = '\0';
     cout<<"compressed text: "<<compressed<<endl;
     new_info.value = new char[compressed_size];
-    memcpy(&new_info.value, compressed, compressed_size);
+    memcpy(new_info.value, compressed, compressed_size);
+    new_info.value[compressed_size] = '\0';
     new_info.compressed_size = compressed_size;
     //new_info.value = value;
 	store[key] = new_info;
@@ -101,7 +101,13 @@ void ComplexStore::compressing(void){
             store[*i].compressed = true;
             store[*i].last_atime = this->getTime();
             store[*i].temp = INITIAL_TEMP;
-            //TODO: compress data
+            char compressed[1024];
+            char *value = store[*i].value;
+            int source_size = strlen(value);
+            int compressed_size = LZ4_compress(value, compressed, source_size);
+            cout<<"compressed text: "<<compressed<<endl;
+            memcpy(store[*i].value, compressed, compressed_size);
+            store[*i].value[compressed_size]='\0';
             hot_list.erase(i++);
         }else{
             ++i;
