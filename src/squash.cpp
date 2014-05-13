@@ -1,5 +1,7 @@
+#include <fstream>
 #include <iostream>
 #include <string.h>
+#include <unistd.h>
 
 #include "SpookyV2.h"
 #include "lz4.h"
@@ -7,6 +9,8 @@
 #include "simple_store.h"
 
 using namespace std;
+
+const char *PID_FILENAME="squash.pid";
 
 void hash_example() {
 	cout << "##### Start Hash Example" << endl;
@@ -59,10 +63,22 @@ void store_example() {
 	cout << store.get("h1", value) << endl;
 }
 
+void write_pid() {
+	fstream fout(PID_FILENAME, ios_base::out | ios_base::trunc);
+	fout << getpid() << endl;
+}
+
+void remove_pid() {
+	remove(PID_FILENAME);
+}
+
 int main() {
+	write_pid();
+
 	hash_example();
 	compress_example();
 	store_example();
 
+	remove_pid();
 	return 0;
 }
