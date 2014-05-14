@@ -24,7 +24,10 @@ int main() {
 	cout << bind(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr));
 	char buff[BUFF_SIZE];
 
-	while (true) {
-		//recv(sockfd, buff, BUFF_SIZE, 0);
+	listen(sockfd, 2);
+	int fd;
+
+	while ((fd = accept(sockfd, 0, 0))) {
+		recv(sockfd, buff, BUFF_SIZE, 0);
 	}
 }
