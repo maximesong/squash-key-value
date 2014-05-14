@@ -10,11 +10,12 @@ CPP_FLAGS=-std=c++11
 
 PROGRAM=squash
 
-objects=spooky.o lz4.o simple_store.o simple_data_block.o
+objects=spooky.o lz4.o simple_store.o simple_data_block.o \
+	resource_monitor.o
 
 all: $(PROGRAM)
 
-$(PROGRAM): src/squash.cpp spooky.o lz4.o complex_store.o
+$(PROGRAM): src/squash.cpp $(objects)
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) $^ -o $@
 
 spooky.o: lib/SpookyV2.cpp
@@ -26,7 +27,13 @@ lz4.o: lib/lz4.c
 complex_store.o: src/complex_store.cpp
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
 
+simple_store.o: src/complex_store.cpp
+	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
+
 simple_data_block.o: src/simple_data_block.cpp
+	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
+
+resource_monitor.o: src/resource_monitor.cpp
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
 
 clean:

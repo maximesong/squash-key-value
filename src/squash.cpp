@@ -6,6 +6,7 @@
 #include "SpookyV2.h"
 #include "lz4.h"
 #include "complex_store.h"
+#include "resource_monitor.h"
 
 using namespace std;
 
@@ -66,6 +67,7 @@ void store_example() {
 		cout << value << endl;
 	}
 	
+
     //cout << store.get("h1", value) << endl;
     
     sleep(2);    
@@ -119,13 +121,18 @@ void remove_pid() {
 	remove(PID_FILENAME);
 }
 
+void memory_example() {
+	int i = 0;
+	cout << ResourceMonitor::getMemoryUsage() << "k" << endl;
+	while (i < 500000) {
+		char *b = new char[1024]; // 1k
+		++i;
+	}
+	cout << ResourceMonitor::getMemoryUsage() << "k" << endl;
+}
+
 int main() {
 	write_pid();
-
-	hash_example();
-	compress_example();
-	store_example();
-
-	remove_pid();
+	memory_example();
 	return 0;
 }
