@@ -10,10 +10,15 @@ CPP_FLAGS=-std=c++11
 
 PROGRAM=squash
 
+SERVER_PROGRAM=server
+
 objects=spooky.o lz4.o simple_store.o simple_data_block.o \
 	resource_monitor.o
 
-all: $(PROGRAM)
+all: $(PROGRAM) $(SERVER_PROGRAM)
+
+$(SERVER_PROGRAM): src/squash-server.cpp $(objects)
+	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) $^ -o $@
 
 $(PROGRAM): src/squash.cpp $(objects)
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) $^ -o $@

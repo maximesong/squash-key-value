@@ -1,5 +1,6 @@
 squash.pid
 squash
+server
 *~
 *.o
 *.a
