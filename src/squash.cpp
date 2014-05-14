@@ -52,11 +52,11 @@ void compress_example() {
 
 void store_example() {
 	ComplexStore store;
-	store.put("hi", "012345");
-    store.put("a","123456");
-    store.put("b","234567");
-    store.put("c","345678");
-    store.put("d","456789");
+	store.put("hi", "01234vczvsfqwervcxzfadsfqwegdxczbxcvdsdfqergfdbcxbfdsafewqr");
+    store.put("a","123456xxxxxxxxxxxxxx");
+    store.put("b","234567xxxxxxxxxxxxx");
+    store.put("c","345678yyyyyyyyyyyyyyyy");
+    store.put("d","456789zzzzzzzzzzzz");
 
 	char value[100];
     //sleep(5);
