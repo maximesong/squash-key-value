@@ -12,12 +12,17 @@ PROGRAM=squash
 
 SERVER_PROGRAM=server
 
+CLIENT_PROGRAM=client
+
 objects=spooky.o lz4.o simple_store.o simple_data_block.o \
 	resource_monitor.o
 
-all: $(PROGRAM) $(SERVER_PROGRAM)
+all: $(PROGRAM) $(SERVER_PROGRAM) $(CLIENT_PROGRAM)
 
 $(SERVER_PROGRAM): src/squash-server.cpp $(objects)
+	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) $^ -o $@
+
+$(CLIENT_PROGRAM): src/squash-client.cpp $(objects)
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) $^ -o $@
 
 $(PROGRAM): src/squash.cpp $(objects)
