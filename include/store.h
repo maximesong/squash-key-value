@@ -3,7 +3,17 @@ public:
 	/**
 	 * @return the size of the value, or -1 if the value it not available
 	 */
-	virtual int get(const char* key, char *dest) = 0;
+	virtual int get(const char *key, char *dest) = 0;
+
+	/**
+	 * @return the size of the value, or -1 if the value it not available
+	 */
+	virtual int get_str(const char *key, char *dest) {
+		int size = get(key, dest);
+		if (size >= 0)
+			dest[size] = '\0';
+		return size;
+	}
 
 	/**
 	 * @return 0 if put is success, or -1 otherwise
@@ -15,5 +25,5 @@ public:
 	/**
 	 * @return 0 if put is success, or -1 otherwise
 	 */
-	virtual int put(const char* key, const char *value, int size) = 0;
+	virtual int put(const char *key, const char *value, int size) = 0;
 };
