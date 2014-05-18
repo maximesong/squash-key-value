@@ -15,6 +15,7 @@ var extract_sites = function (html, callback) {
         var name = $('.desc-paragraph a', element).text();
         var info_url = $('.desc-paragraph a', element).attr('href');
         sites_info[name] = {
+          rank: $('.count', element).text(),
           info_url: info_url
         };
       });
@@ -69,24 +70,23 @@ var download_data = function() {
   mkdir(sites_info_path);
   mkdir(sites_list_path);
 
+  var pair_list = [];
   (function helper(i) {
     if (i >= 20) {
+      fs.writeFileSync('sites.json', JSON.stringify(pair_list, null, 4));
       return;
     }
     var html = fs.readFileSync(sites_list_path + '/sites' + i);
     extract_sites(html, function(sites) {
-      var pair_list = [];
       for (var site in sites) {
-        if (!fs.existsSync(sites_info_path + '/' + site)) {
-          pair_list.push({
-            url: alexa2_url + site,
-            filename: sites_info_path + '/' + site
-          });
-        }
+        pair_list.push({
+          site: site.toLowerCase(),
+          rank: sites[site].rank
+        });
       }
-      download_and_save_all(pair_list, function(){
-        helper(i + 1);
-      });
+      helper(i + 1);
+      // download_and_save_all(pair_list, function(){
+      // });
     });    
   })(0);
     
