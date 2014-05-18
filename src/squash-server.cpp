@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <arpa/inet.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -30,7 +31,7 @@ int main() {
 	int fd;
 
 	while ((fd = accept(sockfd, 0, 0))) {
-		int len = recv(sockfd, buff, BUFF_SIZE, 0);
+		int len = recv(fd, buff, BUFF_SIZE, 0);
 		cout << len << endl;
 		buff[len] = '\0';
 		cout << buff << endl;
