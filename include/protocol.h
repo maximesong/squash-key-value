@@ -42,6 +42,14 @@ public:
 		return head;
 	}
 	
+	static Head makeStats() {
+		Head head;
+		head.m_method = htonl(STATS);
+		head.m_key_len = htonl(0);
+		head.m_value_len = htonl(0);
+		return head;
+	}
+
 	static Head from(const char* source) {
 		Head head;
 		memcpy((char*) &head.m_method, source, 4);
@@ -70,6 +78,12 @@ public:
 		makePackage(dest, 0, 0);		
 	}
 
+	void makePackage(char *dest, int key) {
+		assert(getKeyLength() == 4);
+		int value = htonl(key);
+		makePackage(dest, (const char*) &value);
+	}
+
 	void extract(char *key, char *value, const char *buff) {
 		memcpy(key, buff + headSize(), getKeyLength());
 		memcpy(value, buff + headSize() + getKeyLength(),
@@ -78,6 +92,11 @@ public:
 
 	void extract(char *key, const char *buff) {
 		memcpy(key, buff + headSize(), getKeyLength());
+	}
+
+	void extract(int &value, const char *buff) {
+		memcpy((char*) &value, buff + headSize(), getKeyLength());
+		value = ntohl(value);
 	}
 
 	bool isPut() {
@@ -115,6 +134,7 @@ public:
 	static const int GET = 2;
 	static const int OK = 3;
 	static const int MISS = 4;
+	static const int STATS = 5;
 private:
 	uint32_t m_method;
 	uint32_t m_key_len;

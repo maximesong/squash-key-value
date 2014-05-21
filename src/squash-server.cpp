@@ -6,9 +6,11 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <unistd.h>
 
 #include "protocol.h"
 #include "simple_store.h"
+#include "resource_monitor.h"
 
 using namespace std;
 
@@ -40,6 +42,7 @@ int main() {
 	Head response_head;
 
 	int value_len;
+	int usage;
 	while ((fd = accept(sockfd, 0, 0))) {
 		int len = recv(fd, buff, BUFF_SIZE, 0);
 		if (len >= 0) {
@@ -48,7 +51,7 @@ int main() {
 			switch(head.getMethod()) {
 			case Head::PUT:
 				head.extract(key, value, buff);
-				cout << "Key: " <<
+				cout << "Put Key: " <<
 					key << endl;
 				cout << "Value: " <<
 					value << endl;
@@ -56,6 +59,7 @@ int main() {
 				ok_head = Head::makeOk();
 				ok_head.makePackage(buff);
 				send(fd, buff, ok_head.bufferSize(), 0);
+				close(fd);
 				break;
 			case Head::GET:
 				head.extract(key, buff);
@@ -70,6 +74,7 @@ int main() {
 					send(fd, buff, 
 					     response_head.bufferSize(),
 					     0);
+					close(fd);
 				} else {
 					response_head =
 						Head::makeMiss();
@@ -78,10 +83,23 @@ int main() {
 					send(fd, buff,
 					     response_head.bufferSize(),
 					     0);
+					close(fd);
 				}
+				break;
+			case Head::STATS:
+				usage = ResourceMonitor::getMemoryUsage();
+				cout << "Usage:" << usage << endl;
+				response_head = Head::makeOk(4);
+				response_head.makePackage(
+					buff, usage);
+				send(fd, buff, 
+				     response_head.bufferSize(),
+				     0);
+				close(fd);
 				break;
 			default:
 				cout << "Unknown" << endl;
+				break;
 			}
 		} else {
 			cout << "Error: " << len << endl;
