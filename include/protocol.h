@@ -12,7 +12,7 @@ public:
 
 	static Head makeGet(int key_len) {
 		Head head;
-		head.m_method = htonl(PUT);
+		head.m_method = htonl(GET);
 		head.m_key_len = htonl(key_len);
 		head.m_value_len = htonl(0);
 		return head;
@@ -22,6 +22,14 @@ public:
 		Head head;
 		head.m_method = htonl(OK);
 		head.m_key_len = htonl(key_len);
+		head.m_value_len = htonl(0);
+		return head;
+	}
+
+	static Head makeOk() {
+		Head head;
+		head.m_method = htonl(OK);
+		head.m_key_len = htonl(0);
 		head.m_value_len = htonl(0);
 		return head;
 	}
@@ -54,6 +62,12 @@ public:
 	void makePackage(char *dest, const char* key) {
 		assert(getValueLength() == 0);
 		makePackage(dest, key, 0);
+	}
+
+	void makePackage(char *dest) {
+		assert(getKeyLength() == 0);
+		assert(getValueLength() == 0);
+		makePackage(dest, 0, 0);		
 	}
 
 	void extract(char *key, char *value, const char *buff) {

@@ -36,6 +36,10 @@ int main() {
 	int fd;
 
 	SimpleStore store;
+	Head ok_head = Head::makeOk();
+	Head response_head;
+
+	int value_len;
 	while ((fd = accept(sockfd, 0, 0))) {
 		int len = recv(fd, buff, BUFF_SIZE, 0);
 		if (len >= 0) {
@@ -49,12 +53,32 @@ int main() {
 				cout << "Value: " <<
 					value << endl;
 				store.put_str(key, value);
+				ok_head = Head::makeOk();
+				ok_head.makePackage(buff);
+				send(fd, buff, ok_head.bufferSize(), 0);
 				break;
 			case Head::GET:
 				head.extract(key, buff);
-				cout << "Key: " <<
+				cout << "Get Key: " <<
 					key << endl;
-				store.get_str(key, value);
+				value_len = store.get_str(key, value);
+				if (value_len >= 0) {
+					response_head = 
+						Head::makeOk(value_len);
+					response_head.makePackage(
+						buff, value);
+					send(fd, buff, 
+					     response_head.bufferSize(),
+					     0);
+				} else {
+					response_head =
+						Head::makeMiss();
+					response_head.makePackage(
+						buff);
+					send(fd, buff,
+					     response_head.bufferSize(),
+					     0);
+				}
 				break;
 			default:
 				cout << "Unknown" << endl;

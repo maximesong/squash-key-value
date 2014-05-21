@@ -30,13 +30,16 @@ int get(int sockfd, const char *key, int key_len,
 	Head head = Head::makeGet(key_len);
 	char *buff = new char[head.bufferSize()];
 	head.makePackage(buff, key);
+	cout << "Send?" << endl;
 	send(sockfd, buff, head.bufferSize(), 0);
 	delete[] buff;
 
 	char recv_buff[RESPONSE_BUFF_SIZE];
 	int len = recv(sockfd, recv_buff, RESPONSE_BUFF_SIZE, 0);
-	cout << len << endl;
-	return len;
+	assert(len >= 0);
+	Head recv_head = Head::from(recv_buff);
+	recv_head.extract(value, recv_buff);
+	return recv_head.getKeyLength();
 }
 
 void put_str(int sockfd, const char *key, const char *value) {
@@ -66,7 +69,8 @@ int main() {
 
 	put_str(sockfd, "Hello", "World");
 	char value_buff[VALUE_BUFF_SIZE];
-	get_str(sockfd, "Hello", value_buff);
+	int len = get_str(sockfd, "Hello", value_buff);
+	cout << len << value_buff << endl;
 //	const char *text = "some text";
 //	send(sockfd, text, strlen(text), 0);
 }
