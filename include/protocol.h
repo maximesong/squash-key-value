@@ -1,3 +1,5 @@
+#include <assert.h>
+
 class Head {
 public:
 	static Head makePut(int key_len, int value_len) {
@@ -8,11 +10,27 @@ public:
 		return head;
 	}
 
-	static Head makeGet(int key_len, int value_len) {
+	static Head makeGet(int key_len) {
 		Head head;
 		head.m_method = htonl(PUT);
 		head.m_key_len = htonl(key_len);
-		head.m_value_len = htonl(value_len);
+		head.m_value_len = htonl(0);
+		return head;
+	}
+
+	static Head makeOk(int key_len) {
+		Head head;
+		head.m_method = htonl(OK);
+		head.m_key_len = htonl(key_len);
+		head.m_value_len = htonl(0);
+		return head;
+	}
+
+	static Head makeMiss() {
+		Head head;
+		head.m_method = htonl(MISS);
+		head.m_key_len = htonl(0);
+		head.m_value_len = htonl(0);
 		return head;
 	}
 	
@@ -24,7 +42,7 @@ public:
 		return head;
 	}
 
-	void copyTo(char *dest, const char* key, const char* value) {
+	void makePackage(char *dest, const char* key, const char* value) {
 		memcpy(dest, (const char*) &m_method, 4);
 		memcpy(dest + 4, (const char*) &m_key_len, 4);
 		memcpy(dest + 8, (const char*) &m_value_len, 4);
@@ -33,10 +51,19 @@ public:
 		       value, getValueLength());
 	}
 
-	void fillData(char *key, char *value, const char *buff) {
+	void makePackage(char *dest, const char* key) {
+		assert(getValueLength() == 0);
+		makePackage(dest, key, 0);
+	}
+
+	void extract(char *key, char *value, const char *buff) {
 		memcpy(key, buff + headSize(), getKeyLength());
 		memcpy(value, buff + headSize() + getKeyLength(),
 		       getValueLength());
+	}
+
+	void extract(char *key, const char *buff) {
+		memcpy(key, buff + headSize(), getKeyLength());
 	}
 
 	bool isPut() {
@@ -72,6 +99,8 @@ public:
 
 	static const int PUT = 1;
 	static const int GET = 2;
+	static const int OK = 3;
+	static const int MISS = 4;
 private:
 	uint32_t m_method;
 	uint32_t m_key_len;

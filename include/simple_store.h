@@ -1,3 +1,6 @@
+#ifndef SIMPLE_STORE_H
+#define SIMPLE_STORE_H
+
 #include <map>
 #include <functional>
 #include <string.h>
@@ -9,16 +12,9 @@ using namespace std;
 
 class SimpleStore : public Store {
 public:
-	SimpleStore(): store([](const char *a, const char *b) {
-			return strcmp(a, b) < 0;
-		}) {
-	}
-
-	~ SimpleStore() {
-		for (auto e : store) {
-			delete e.second;
-		}
-	}
+	SimpleStore();
+	
+	virtual ~SimpleStore();
 
 	/**
 	 * @return the size of the value, or -1 if the value it not available
@@ -34,3 +30,5 @@ private:
 	map<const char*, SimpleDataBlock*,
 	    std::function<bool(const char*, const char*)>> store;
 };
+
+#endif

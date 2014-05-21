@@ -10,16 +10,18 @@ CPP_FLAGS=-std=c++11
 
 PROGRAM=squash
 
+MAIN=main
+
 SERVER_PROGRAM=server
 
 CLIENT_PROGRAM=client
 
 objects=spooky.o lz4.o simple_store.o simple_data_block.o \
-	resource_monitor.o
+	complex_store.o resource_monitor.o
 
 all: $(PROGRAM) $(SERVER_PROGRAM) $(CLIENT_PROGRAM)
 
-$(SERVER_PROGRAM): src/squash-server.cpp $(objects)
+$(SERVER_PROGRAM):  src/squash-server.cpp $(objects) 
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) $^ -o $@
 
 $(CLIENT_PROGRAM): src/squash-client.cpp $(objects)
@@ -37,13 +39,16 @@ lz4.o: lib/lz4.c
 complex_store.o: src/complex_store.cpp
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
 
-simple_store.o: src/complex_store.cpp
+simple_store.o: src/simple_store.cpp
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
 
 simple_data_block.o: src/simple_data_block.cpp
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
 
 resource_monitor.o: src/resource_monitor.cpp
+	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
+
+squash-server.o: src/squash-server.cpp
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
 
 clean:

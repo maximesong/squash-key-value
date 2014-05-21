@@ -13,17 +13,38 @@ using namespace std;
 const int SERVER_PORT = 9000;
 const char *SERVER_HOST = "127.0.0.1";
 
+const int RESPONSE_BUFF_SIZE = 4096;
+const int VALUE_BUFF_SIZE = 4096;
+
 void put(int sockfd, const char *key, int key_len,
 	 const char* value, int value_len) {
 	Head head = Head::makePut(key_len, value_len);
 	char *buff = new char[head.bufferSize()];
-	head.copyTo(buff, key, value);
+	head.makePackage(buff, key, value);
 	send(sockfd, buff, head.bufferSize(), 0);
 	delete[] buff;
 }
 
+int get(int sockfd, const char *key, int key_len,
+	 char *value) {
+	Head head = Head::makeGet(key_len);
+	char *buff = new char[head.bufferSize()];
+	head.makePackage(buff, key);
+	send(sockfd, buff, head.bufferSize(), 0);
+	delete[] buff;
+
+	char recv_buff[RESPONSE_BUFF_SIZE];
+	int len = recv(sockfd, recv_buff, RESPONSE_BUFF_SIZE, 0);
+	cout << len << endl;
+	return len;
+}
+
 void put_str(int sockfd, const char *key, const char *value) {
 	put(sockfd, key, strlen(key) + 1, value, strlen(value) + 1);
+}
+
+int get_str(int sockfd, const char *key, char *value) {
+	return get(sockfd, key, strlen(key) + 1, value);
 }
 
 int main() {
@@ -44,6 +65,8 @@ int main() {
 		sizeof(struct sockaddr));
 
 	put_str(sockfd, "Hello", "World");
+	char value_buff[VALUE_BUFF_SIZE];
+	get_str(sockfd, "Hello", value_buff);
 //	const char *text = "some text";
 //	send(sockfd, text, strlen(text), 0);
 }

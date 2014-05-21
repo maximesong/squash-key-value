@@ -6,6 +6,7 @@
 #include "SpookyV2.h"
 #include "lz4.h"
 #include "complex_store.h"
+#include "simple_store.h"
 #include "resource_monitor.h"
 
 using namespace std;
@@ -110,6 +111,10 @@ void store_example() {
 		value[size] = '\0';
 		cout << value << endl;
     }
+}
+
+void simple_store_example() {
+	SimpleStore store;
 }
 
 void write_pid() {

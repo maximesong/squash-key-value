@@ -1,3 +1,6 @@
+#ifndef STORE_H
+#define STORE_H
+
 class Store {
 public:
 	/**
@@ -27,3 +30,5 @@ public:
 	 */
 	virtual int put(const char *key, const char *value, int size) = 0;
 };
+
+#endif

@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 
 #include "protocol.h"
+#include "simple_store.h"
 
 using namespace std;
 
@@ -34,16 +35,30 @@ int main() {
 	listen(sockfd, LISTEN_LENGTH);
 	int fd;
 
+	SimpleStore store;
 	while ((fd = accept(sockfd, 0, 0))) {
 		int len = recv(fd, buff, BUFF_SIZE, 0);
 		if (len >= 0) {
 			//cout << len << endl;
 			Head head = Head::from(buff);
-			head.fillData(key, value, buff);
-			cout << "Key: " <<
-				key << endl;
-			cout << "Value: " <<
-				value << endl;
+			switch(head.getMethod()) {
+			case Head::PUT:
+				head.extract(key, value, buff);
+				cout << "Key: " <<
+					key << endl;
+				cout << "Value: " <<
+					value << endl;
+				store.put_str(key, value);
+				break;
+			case Head::GET:
+				head.extract(key, buff);
+				cout << "Key: " <<
+					key << endl;
+				store.get_str(key, value);
+				break;
+			default:
+				cout << "Unknown" << endl;
+			}
 		} else {
 			cout << "Error: " << len << endl;
 		}

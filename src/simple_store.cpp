@@ -4,6 +4,18 @@
 
 using namespace std;
 
+SimpleStore::SimpleStore()
+	: store([](const char *a, const char *b) {
+			return strcmp(a, b) < 0; }) {
+	/* empty */
+}
+
+SimpleStore::~SimpleStore() {
+	for (auto e : store) {
+		delete e.second;
+	}
+}
+
 int SimpleStore::get(const char* key, char *dest) {
 	if (store.count(key)) {
 		return store[key]->getData(dest);
