@@ -6,10 +6,25 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include "protocol.h"
+
 using namespace std;
 
 const int SERVER_PORT = 9000;
 const char *SERVER_HOST = "127.0.0.1";
+
+void put(int sockfd, const char *key, int key_len,
+	 const char* value, int value_len) {
+	Head head = Head::makePut(key_len, value_len);
+	char *buff = new char[head.bufferSize()];
+	head.copyTo(buff, key, value);
+	send(sockfd, buff, head.bufferSize(), 0);
+	delete[] buff;
+}
+
+void put_str(int sockfd, const char *key, const char *value) {
+	put(sockfd, key, strlen(key) + 1, value, strlen(value) + 1);
+}
 
 int main() {
 	int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -28,6 +43,7 @@ int main() {
 	connect(sockfd, (struct sockaddr *)&server_addr, 
 		sizeof(struct sockaddr));
 
-	const char *text = "some text";
-	send(sockfd, text, strlen(text), 0);
+	put_str(sockfd, "Hello", "World");
+//	const char *text = "some text";
+//	send(sockfd, text, strlen(text), 0);
 }

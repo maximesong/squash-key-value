@@ -7,6 +7,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include "protocol.h"
+
 using namespace std;
 
 const int PORT = 9000;
@@ -26,14 +28,24 @@ int main() {
 	bzero(&(addr.sin_zero), 8);
 	bind(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr));
 	char buff[BUFF_SIZE];
+	char key[BUFF_SIZE];
+	char value[BUFF_SIZE];
 
 	listen(sockfd, LISTEN_LENGTH);
 	int fd;
 
 	while ((fd = accept(sockfd, 0, 0))) {
 		int len = recv(fd, buff, BUFF_SIZE, 0);
-		cout << len << endl;
-		buff[len] = '\0';
-		cout << buff << endl;
+		if (len >= 0) {
+			//cout << len << endl;
+			Head head = Head::from(buff);
+			head.fillData(key, value, buff);
+			cout << "Key: " <<
+				key << endl;
+			cout << "Value: " <<
+				value << endl;
+		} else {
+			cout << "Error: " << len << endl;
+		}
 	}
 }
