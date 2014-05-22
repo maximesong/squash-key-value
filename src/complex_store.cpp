@@ -9,6 +9,7 @@
 #define INITIAL_TEMP 100.0
 #define A 0.192
 #define N 20.0
+#define SIZE 5000
 
 using namespace std;
 
@@ -19,7 +20,7 @@ int ComplexStore::get(const char* key, char *value) {
 
         if(store[key].compressed == true){
             cout<<"decompressing..."<<endl;
-            char decompressed[1024];
+            char decompressed[SIZE];
             int compressed_size = store[key].compressed_size;
 	        int decompressed_size = LZ4_decompress_safe(store[key].value, decompressed,compressed_size,1024);
             cout<<"compressed_size:"<<compressed_size<<endl;
@@ -67,7 +68,7 @@ int ComplexStore::put(const char* key, const char *value, int len) {
     new_info.compressed = true;
     new_info.temp = INITIAL_TEMP;
     new_info.last_atime =  this->getTime();
-    char compressed[1024]; 
+    char compressed[SIZE]; 
     cout<<"raw_value="<<value<<endl;
     int source_size = strlen(value);
     int compressed_size = LZ4_compress(value, compressed, source_size);
@@ -102,7 +103,7 @@ void ComplexStore::compressing(void){
             store[*i].compressed = true;
             store[*i].last_atime = this->getTime();
             store[*i].temp = INITIAL_TEMP;
-            char compressed[1024];
+            char compressed[SIZE];
             char *value = store[*i].value;
             int source_size = strlen(value);
             int compressed_size = LZ4_compress(value, compressed, source_size);
