@@ -10,7 +10,10 @@
 
 #include "protocol.h"
 #include "simple_store.h"
+#include "complex_store.h"
 #include "resource_monitor.h"
+
+#define STORE_MODE 1
 
 using namespace std;
 
@@ -37,7 +40,9 @@ int main() {
 	listen(sockfd, LISTEN_LENGTH);
 	int fd;
 
-	SimpleStore store;
+    //SimpleStore store;
+    ComplexStore store;
+
 	Head ok_head = Head::makeOk();
 	Head response_head;
 
