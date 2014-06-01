@@ -16,7 +16,7 @@ SERVER_PROGRAM=server
 
 CLIENT_PROGRAM=client
 
-objects=spooky.o lz4.o simple_store.o simple_data_block.o \
+objects=spooky.o lz4.o json.o simple_store.o simple_data_block.o \
 	complex_store.o resource_monitor.o
 
 all: $(PROGRAM) $(SERVER_PROGRAM) $(CLIENT_PROGRAM)
@@ -35,6 +35,9 @@ spooky.o: lib/SpookyV2.cpp
 
 lz4.o: lib/lz4.c
 	$(CC) $(INCLUDE_FLAGS) -c $< -o $@
+
+json.o: lib/json11.cpp
+	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $^ -o $@
 
 complex_store.o: src/complex_store.cpp
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
