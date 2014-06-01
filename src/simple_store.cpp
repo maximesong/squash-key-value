@@ -26,6 +26,7 @@ int SimpleStore::get(const char* key, char *dest) {
 
 
 int SimpleStore::put(const char* key, const char *value, int size) {
+	cout << "SimpleStore:: put size: " << size << endl;
 	if (store.count(key)) {
 		store[key]->setData(value, size);
 	} else {

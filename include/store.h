@@ -29,7 +29,7 @@ public:
 	virtual string get(string key) {
 		int len = get_str(key.c_str(), buffer);
 		if (len != -1) {
-			return string(buffer, len);
+			return string{buffer};
 		} else {
 			return string{""};
 		}

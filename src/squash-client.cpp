@@ -12,6 +12,7 @@
 
 #include "protocol.h"
 #include "json11.hpp"
+#include "constants.h"
 
 using namespace std;
 using namespace json11;
@@ -20,8 +21,10 @@ using namespace json11;
 const int SERVER_PORT = 9000;
 const char *SERVER_HOST = "127.0.0.1";
 
-const int RESPONSE_BUFF_SIZE = 4096;
-const int VALUE_BUFF_SIZE = 4096;
+const int RESPONSE_BUFF_SIZE = MAX_BUFFER_SIZE;
+const int VALUE_BUFF_SIZE = MAX_BUFFER_SIZE;
+
+char result_buffer[MAX_BUFFER_SIZE];
 
 int put(int sockfd, const char *key, int key_len,
 	 const char* value, int value_len) {
@@ -65,6 +68,15 @@ void put(int sockfd, const string &key, const string &value) {
 
 int get_str(int sockfd, const char *key, char *value) {
 	return get(sockfd, key, strlen(key) + 1, value);
+}
+
+string get(int sockfd, string key) {
+	int len = get_str(sockfd, key.c_str(), result_buffer);
+	if (len != -1) {
+		return string{result_buffer};
+	} else {
+		return string{""};
+	}
 }
 
 int connectSocket() {
@@ -172,11 +184,21 @@ void test_top_sites() {
 		string key = j["site"].string_value();
 		string value = j["html"].string_value();
 
+		cout << "key" << value.size() << "@"
+		     << strlen(value.c_str()) << endl;
+
 		int sockfd = connectSocket();
 		put(sockfd, key, value);
 		close(sockfd);
-		// sockfd = connectSocket();
-		// get_str(sockfd, key.c_str(), value_buff);
+		sockfd = connectSocket();
+		cout << "Get: " << key << endl;
+		string value_back = get(sockfd, key);
+		cout << "Gotten: " << key << endl;
+		if (value_back != value) {
+			cout << "put: " << value.size() << endl;
+			cout << "get: " << value_back.size() << endl;
+		}
+		assert(value_back == value);
 	}
 }
 

@@ -1,5 +1,9 @@
 #include <assert.h>
 
+#include <iostream>
+
+using namespace std;
+
 class Head {
 public:
 	static Head makePut(int key_len, int value_len) {
@@ -7,6 +11,9 @@ public:
 		head.m_method = htonl(PUT);
 		head.m_key_len = htonl(key_len);
 		head.m_value_len = htonl(value_len);
+		cout << value_len << "$"
+		     << head.getValueLength() << endl;
+		assert(head.getValueLength() == value_len);
 		return head;
 	}
 

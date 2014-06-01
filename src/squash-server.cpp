@@ -31,7 +31,13 @@ int main() {
 	addr.sin_addr.s_addr = inet_addr(HOST);
 
 	bzero(&(addr.sin_zero), 8);
-	bind(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr));
+	int r = bind(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr));
+	if (r != 0) {
+		cout << "Failed to bind server" << endl;
+		return -1;
+	} else {
+		cout << "Starting server..." << endl;
+	}
 	char buff[MAX_BUFFER_SIZE];
 	char key[MAX_BUFFER_SIZE];
 	char value[MAX_BUFFER_SIZE];
@@ -57,8 +63,10 @@ int main() {
 				head.extract(key, value, buff);
 				cout << "Put Key: " <<
 					key << endl;
-				cout << "Value: " <<
-					value << endl;
+				cout << "Put Size: " << head.getValueLength()
+				     << "&" << strlen(value) << endl;
+//				cout << "Value: " <<
+//					value << endl;
 //				cout << "Before Store" << endl;
 				store.put_str(key, value);
 //				cout << "After Store" << endl;
