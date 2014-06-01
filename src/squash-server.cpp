@@ -12,6 +12,7 @@
 #include "simple_store.h"
 #include "complex_store.h"
 #include "resource_monitor.h"
+#include "constants.h"
 
 #define STORE_MODE 1
 
@@ -19,8 +20,6 @@ using namespace std;
 
 const int PORT = 9000;
 const char *HOST = "127.0.0.1";
-
-const int BUFF_SIZE = 4096;
 
 const int LISTEN_LENGTH = 10;
 
@@ -33,15 +32,15 @@ int main() {
 
 	bzero(&(addr.sin_zero), 8);
 	bind(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr));
-	char buff[BUFF_SIZE];
-	char key[BUFF_SIZE];
-	char value[BUFF_SIZE];
+	char buff[MAX_BUFFER_SIZE];
+	char key[MAX_BUFFER_SIZE];
+	char value[MAX_BUFFER_SIZE];
 
 	listen(sockfd, LISTEN_LENGTH);
 	int fd;
 
-    //SimpleStore store;
-    ComplexStore store;
+	SimpleStore store;
+	//ComplexStore store;
 
 	Head ok_head = Head::makeOk();
 	Head response_head;
@@ -49,7 +48,7 @@ int main() {
 	int value_len;
 	int usage;
 	while ((fd = accept(sockfd, 0, 0))) {
-		int len = recv(fd, buff, BUFF_SIZE, 0);
+		int len = recv(fd, buff, MAX_BUFFER_SIZE, 0);
 		if (len >= 0) {
 			//cout << len << endl;
 			Head head = Head::from(buff);
@@ -60,7 +59,9 @@ int main() {
 					key << endl;
 				cout << "Value: " <<
 					value << endl;
+//				cout << "Before Store" << endl;
 				store.put_str(key, value);
+//				cout << "After Store" << endl;
 				ok_head = Head::makeOk();
 				ok_head.makePackage(buff);
 				send(fd, buff, ok_head.bufferSize(), 0);

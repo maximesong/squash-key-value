@@ -59,6 +59,10 @@ void put_str(int sockfd, const char *key, const char *value) {
 	put(sockfd, key, strlen(key) + 1, value, strlen(value) + 1);
 }
 
+void put(int sockfd, const string &key, const string &value) {
+	put_str(sockfd, key.c_str(), value.c_str());
+}
+
 int get_str(int sockfd, const char *key, char *value) {
 	return get(sockfd, key, strlen(key) + 1, value);
 }
@@ -156,18 +160,27 @@ string read_file(const char *filename) {
 }
 
 void test_top_sites() {
-  string text = read_file("tools/sites.json");
-  string error;
-  Json parsed = Json::parse(text, error);
-  assert(parsed.is_array());
-  Json::array arr = parsed.array_items();
-  for (Json j : arr) {
-    assert(j.is_object());
-    cout << j["site"].string_value() << endl;
-    cout << j["html"].string_value() << endl;
-  }
+        // max value length: 289208
+	string text = read_file("tools/sites.json");
+	string error;
+	Json parsed = Json::parse(text, error);
+	assert(parsed.is_array());
+	Json::array arr = parsed.array_items();
+
+	for (Json j : arr) {
+		assert(j.is_object());
+		string key = j["site"].string_value();
+		string value = j["html"].string_value();
+
+		int sockfd = connectSocket();
+		put(sockfd, key, value);
+		close(sockfd);
+		// sockfd = connectSocket();
+		// get_str(sockfd, key.c_str(), value_buff);
+	}
 }
 
 int main() {
-  test_top_sites();
+	cout << "client started..." << endl;
+	test_top_sites();
 }
