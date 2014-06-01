@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <map>
 
 #include <arpa/inet.h>
@@ -10,8 +11,11 @@
 #include <unistd.h>
 
 #include "protocol.h"
+#include "json11.hpp"
 
 using namespace std;
+using namespace json11;
+
 
 const int SERVER_PORT = 9000;
 const char *SERVER_HOST = "127.0.0.1";
@@ -106,7 +110,7 @@ void get_stats(int sockfd) {
 	assert(recv_head.getMethod() == Head::OK);
 }
 
-int main() {
+void test_random() {
 	char value_buff[VALUE_BUFF_SIZE];
 	char keys[1024][128];
 	char values[1024][1024];
@@ -129,4 +133,41 @@ int main() {
 	}
 	int sockfd = connectSocket();
 	get_stats(sockfd);
+}
+
+string read_file(const char *filename) {
+  std::ifstream is(filename);
+  if (is) {
+    // get length of file:
+    is.seekg (0, is.end);
+    int length = is.tellg();
+    is.seekg (0, is.beg);
+
+    char * buffer = new char[length];
+    is.read (buffer,length);
+
+    is.close();
+    string result{buffer};
+
+    delete[] buffer;
+    return result;
+  }
+  return "";
+}
+
+void test_top_sites() {
+  string text = read_file("tools/sites.json");
+  string error;
+  Json parsed = Json::parse(text, error);
+  assert(parsed.is_array());
+  Json::array arr = parsed.array_items();
+  for (Json j : arr) {
+    assert(j.is_object());
+    cout << j["site"].string_value() << endl;
+    cout << j["html"].string_value() << endl;
+  }
+}
+
+int main() {
+  test_top_sites();
 }
