@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include <arpa/inet.h>
 #include <stdio.h>
@@ -21,9 +22,21 @@ using namespace std;
 const int PORT = 9000;
 const char *HOST = "127.0.0.1";
 
+const char *PID_FILENAME="server.pid";
+
 const int LISTEN_LENGTH = 10;
 
+void write_pid() {
+	fstream fout(PID_FILENAME, ios_base::out | ios_base::trunc);
+	fout << getpid() << endl;
+}
+
+void remove_pid() {
+	remove(PID_FILENAME);
+}
+
 int main() {
+	write_pid();
 	int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET;
@@ -56,7 +69,8 @@ int main() {
 	while ((fd = accept(sockfd, 0, 0))) {
 		int len = recv(fd, buff, MAX_BUFFER_SIZE, 0);
 		if (len >= 0) {
-			//cout << len << endl;
+			cout << "Server len: " <<  len << endl
+			     << "MAX: " << MAX_BUFFER_SIZE << endl;
 			Head head = Head::from(buff);
 			switch(head.getMethod()) {
 			case Head::PUT:
@@ -119,4 +133,6 @@ int main() {
 			cout << "Error: " << len << endl;
 		}
 	}
+	remove_pid();
 }
+
