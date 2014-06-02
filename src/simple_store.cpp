@@ -14,6 +14,7 @@ SimpleStore::SimpleStore()
 
 SimpleStore::~SimpleStore() {
 	for (auto e : store) {
+		delete e.first;
 		delete e.second;
 	}
 }
