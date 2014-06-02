@@ -120,7 +120,7 @@ void gen_random(char *s, const int len) {
 		s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
 	}
 
-	s[len] = 0;
+	s[len] = '\0';
 }
 
 void get_stats(int sockfd) {
@@ -137,29 +137,29 @@ void get_stats(int sockfd) {
 	assert(recv_head.getMethod() == Head::OK);
 }
 
-void test_random() {
-	char value_buff[VALUE_BUFF_SIZE];
-	char keys[1024][128];
-	char values[1024][1024];
+void test_random(int key_size = 1024, int value_size = MAX_VALUE_SIZE, int count = 500) {
+//	char value_buff[MAX_BUFFER_SIZE];
+	for (int i = 0; i != count; ++i) {
+		char *key = new char[key_size + 1];
+		char *value = new char[value_size + 1];
+		gen_random(key, key_size);
+		gen_random(value, value_size);
 
-	// if you need different random for various invokation, use srand
-	//srand (time(NULL));
-
-	for (int i = 0; i != 1024; ++i) {
-		cout << i << endl;
-		gen_random(keys[i], 128 - 1);
-		gen_random(values[i], 1024 - 1);
 		int sockfd = connectSocket();
-		put_str(sockfd, keys[i], values[i]);
+		put_str(sockfd, key, value);
 		close(sockfd);
 
 		sockfd = connectSocket();
-		get_str(sockfd, keys[i], value_buff);
-		cout << value_buff << endl;
+		string value_back = get(sockfd, key);
 		close(sockfd);
+		if (value_back.size() != value_size) {
+			cout << "Unmatch: " << value_back.size() << " should be " << value_size << endl;
+			assert(value_back.size() == value_size);
+		}
 	}
 	int sockfd = connectSocket();
 	get_stats(sockfd);
+	close(sockfd);
 }
 
 string read_file(const char *filename) {
@@ -216,11 +216,11 @@ void get_pairs(const map<string, string> &hot,
 		string value_back = get(sockfd, key);
 		close(sockfd);
 
-		// if (value_back != value) {
-		// 	cout << "put: " << value.size() << endl;
-		// 	cout << "get: " << value_back.size() << endl;
-		// }
-		// assert(value_back == value);
+		if (value_back != value) {
+			cout << "put: " << value.size() << endl;
+			cout << "get: " << value_back.size() << endl;
+		}
+		assert(value_back == value);
 		--count;
 	}
 }
@@ -293,9 +293,10 @@ void test_once() {
 }
 
 int main(int argc, char **argv) {
-	cout << "client started..." << endl;
+	cout << "Client started..." << endl;
 	if (argc == 1) {
-		test_top_sites();
+		test_random();
+		//test_top_sites();
 	} else if (argc == 4) {
 		int copies = stoi(string{argv[1]});
 		double rate = stod(string{argv[2]});

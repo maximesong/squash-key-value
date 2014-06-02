@@ -136,13 +136,33 @@ void memory_example() {
 	cout << ResourceMonitor::getMemoryUsage() << "k" << endl;
 }
 
-void test_simple_store() {
-	SimpleStore store;
-	store.put_str("a", "b");
-	store.put_str("c", "d");
+void gen_random(char *s, const int len) {
+	static const char alphanum[] =
+		"0123456789"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz";
+
+	for (int i = 0; i < len; ++i) {
+		s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
+	}
+
+	s[len] = '\0';
 }
+
+void test_simple_store(int key_size = 1024, int value_size = MAX_VALUE_SIZE, int count = 500) {
+	SimpleStore store;
+	for (int i = 0; i != count; ++i) {
+		char *key = new char[key_size + 1];
+		char *value = new char[value_size + 1];
+		gen_random(key, key_size);
+		gen_random(value, value_size);
+
+		store.put(key, value);
+	}
+}
+
 int main() {
-	write_pid();
+//	write_pid();
 //	memory_example();
 	test_simple_store();
 	return 0;

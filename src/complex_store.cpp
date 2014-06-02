@@ -63,14 +63,14 @@ int ComplexStore::get(const char* key, char *value) {
 }
 
 
-int ComplexStore::put(const char* key, const char *value, int len) {
+int ComplexStore::put(const char* key, int key_size, const char *value, int value_size) {
     info new_info;
     new_info.compressed = true;
     new_info.temp = INITIAL_TEMP;
     new_info.last_atime =  this->getTime();
     char compressed[SIZE]; 
     cout<<"raw_value="<<value<<endl;
-    int source_size = strlen(value);
+    int source_size = value_size;
     int compressed_size = LZ4_compress(value, compressed, source_size);
     new_info.value = new char[compressed_size];
     memcpy(new_info.value, compressed, compressed_size);

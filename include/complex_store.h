@@ -16,13 +16,13 @@ public:
 
 
 	virtual int put(const char* key, const char *value) {
-		return put(key, value, strlen(value)+1);
+		return put(key, strlen(key) + 1, value, strlen(value)+1);
 	}
 
 	/**
 	 * @return 0 if put is success, or -1 if not
 	 */
-	virtual int put(const char* key, const char *value, int len);
+	virtual int put(const char* key, int key_size, const char *value, int value_size);
 
     unsigned long long getTime(void);
 

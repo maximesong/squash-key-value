@@ -24,12 +24,12 @@ public:
 	/**
 	 * @return 0 if put is success, or -1 if not
 	 */
-	virtual int put(const char* key, const char *value, int size);
+	virtual int put(const char* key, int key_size, const char *value, int value_size);
 
 	int size();
 private:
-	map<const char*, SimpleDataBlock*,
-	    std::function<bool(const char*, const char*)>> store;
+	map<SimpleDataBlock*, SimpleDataBlock*,
+	    std::function<bool(const SimpleDataBlock*, const SimpleDataBlock*)>> store;
 };
 
 #endif

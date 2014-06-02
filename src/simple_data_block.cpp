@@ -18,12 +18,12 @@ SimpleDataBlock::~SimpleDataBlock() {
 }
 
 void SimpleDataBlock::setData(const char* data, int size) {
-	assert(size > 0);
+	assert(size >= 0);
 
 	if (m_data != 0)
 		delete [] m_data;
 	m_data = new char[size];
-	memcpy(m_data , data, size);
+	memcpy(m_data, data, size);
 	m_size = size;
 }
 

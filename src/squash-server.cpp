@@ -47,6 +47,9 @@ int main() {
 	int r = bind(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr));
 	if (r != 0) {
 		cout << "Failed to bind server" << endl;
+		char error[MAX_BUFFER_SIZE];
+		perror(error);
+		cout << error;
 		return -1;
 	} else {
 		cout << "Starting server..." << endl;
@@ -67,23 +70,27 @@ int main() {
 	int value_len;
 	int usage;
 	while ((fd = accept(sockfd, 0, 0))) {
+		int size = 0;
 		int len = recv(fd, buff, MAX_BUFFER_SIZE, 0);
-		if (len >= 0) {
-			cout << "Server len: " <<  len << endl
-			     << "MAX: " << MAX_BUFFER_SIZE << endl;
-			Head head = Head::from(buff);
+		Head head;
+		if (len != 0) {
+			head = Head::from(buff);
+			size += len;
+		}
+		while (len != 0 && size < head.bufferSize()) {
+			len = recv(fd, buff + size, MAX_BUFFER_SIZE, 0);
+			cout << "Server len: " << len << endl;
+			size += len;
+		}
+		cout << "Out of receive loop" << endl;
+		if (size >= 0) {
+			cout << "Server size: " <<  size << endl;
 			switch(head.getMethod()) {
 			case Head::PUT:
 				head.extract(key, value, buff);
-				cout << "Put Key: " <<
-					key << endl;
 				cout << "Put Size: " << head.getValueLength()
 				     << "&" << strlen(value) << endl;
-//				cout << "Value: " <<
-//					value << endl;
-//				cout << "Before Store" << endl;
-				store.put_str(key, value);
-//				cout << "After Store" << endl;
+				store.put(key, head.getKeyLength(), value, head.getValueLength());
 				ok_head = Head::makeOk();
 				ok_head.makePackage(buff);
 				send(fd, buff, ok_head.bufferSize(), 0);

@@ -11,8 +11,9 @@ public:
 		head.m_method = htonl(PUT);
 		head.m_key_len = htonl(key_len);
 		head.m_value_len = htonl(value_len);
-		cout << value_len << "$"
-		     << head.getValueLength() << endl;
+		cout << "Head: " << value_len << "$"
+		     << head.getValueLength() << "@"
+		     << head.bufferSize() << endl;
 		assert(head.getValueLength() == value_len);
 		return head;
 	}
