@@ -181,7 +181,51 @@ string read_file(const char *filename) {
   return "";
 }
 
-void test_top_sites() {
+void put_pairs(const map<string, string> pairs) {
+	for (auto e : pairs) {
+		string key = e.first;
+		string value = e.second;
+		int sockfd = connectSocket();
+		put(sockfd, key, value);
+		close(sockfd);
+	}
+}
+
+void get_pairs(const map<string, string> &hot,
+	       const map<string, string> &cold,
+	       int count, double hot_rate) {
+	while (count > 0) {
+		int sockfd = connectSocket();
+		double r = (double) rand() / RAND_MAX;
+		string key;
+		string value;
+		if (r < hot_rate) {
+			int index = rand() % hot.size();
+			auto item = hot.begin();
+			advance(item, index);
+			key = item->first;
+			value = item->second;
+		} else {
+			int index = rand() % cold.size();
+			auto item = cold.begin();
+			advance(item, index);
+			key = item->first;
+			value = item->second;
+		}
+		string value_back = get(sockfd, key);
+		close(sockfd);
+
+		// if (value_back != value) {
+		// 	cout << "put: " << value.size() << endl;
+		// 	cout << "get: " << value_back.size() << endl;
+		// }
+		// assert(value_back == value);
+		--count;
+	}
+}
+
+void test_top_sites(int hot_copies = 1, int cold_copies = 1,
+		    double hot_rate = 0.5, int count = 1000) {
         // max value length: 289208
 	string text = read_file("tools/sites.json");
 	string error;
@@ -189,30 +233,33 @@ void test_top_sites() {
 	assert(parsed.is_array());
 	Json::array arr = parsed.array_items();
 
+	map<string, string> hot;
+	map<string, string> cold;
 	for (Json j : arr) {
 		assert(j.is_object());
 		string key = j["site"].string_value();
-//		string key = j["site"].string_value() + to_string(rand());
 		string value = j["html"].string_value();
-
-		cout << "key" << value.size() << "@"
-		     << strlen(value.c_str()) << endl;
-
-		int sockfd = connectSocket();
-		put(sockfd, key, value);
-		close(sockfd);
-		sockfd = connectSocket();
-		cout << "Get: " << key << endl;
-		string value_back = get(sockfd, key);
-		cout << "Gotten: " << key << endl;
-		if (value_back != value) {
-			cout << "put: " << value.size() << endl;
-			cout << "get: " << value_back.size() << endl;
+		if (hot_copies == 1) {
+			hot[key] = value;
+		} else {
+			for (int i = 0; i != hot_copies; ++i) {
+				hot[key + "@" + to_string(i + 1)] = value;
+			}
 		}
-//		assert(value_back == value);
+		if (cold_copies == 1) {
+			cold[key] = value;
+		} else {
+			for (int i = 0; i != cold_copies; ++i) {
+				cold[key + "@" + to_string(i + 1)] = value;
+			}
+		}
 	}
+	put_pairs(hot);
+	put_pairs(cold);
+	get_pairs(hot, cold, hot_rate, count);
 	int sockfd = connectSocket();
 	get_stats(sockfd);
+	close(sockfd);
 }
 
 void test_once() {
@@ -237,8 +284,18 @@ void test_once() {
 	get_stats(sockfd);
 }
 
-int main() {
+int main(int argc, char **argv) {
 	cout << "client started..." << endl;
+	if (argc == 1) {
+		test_top_sites();
+	} else if (argc == 4) {
+		int copies = stoi(string{argv[1]});
+		double rate = stod(string{argv[2]});
+		int count = stoi(argv[3]);
+		test_top_sites(copies, rate, count);
+	} else {
+		cout << "Usage: ./client <copies> <hot_rate> <get_count>" 
+		     << endl;
+	}
 	//test_once();
-	test_top_sites();
 }
