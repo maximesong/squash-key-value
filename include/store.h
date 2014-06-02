@@ -42,14 +42,15 @@ public:
 		return put(key, value, strlen(value) + 1);
 	};
 
+	virtual int put(const string &key, const string &value) {
+		return put_str(key.c_str(), value.c_str());
+	}
+
 	/**
 	 * @return 0 if put is success, or -1 otherwise
 	 */
 	virtual int put(const char *key, const char *value, int size) = 0;
 
-	virtual int put(const string &key, const string &value) {
-		return put_str(key.c_str(), value.c_str());
-	}
 };
 
 #endif

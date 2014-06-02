@@ -191,7 +191,8 @@ void test_top_sites() {
 
 	for (Json j : arr) {
 		assert(j.is_object());
-		string key = j["site"].string_value() + to_string(rand());
+		string key = j["site"].string_value();
+//		string key = j["site"].string_value() + to_string(rand());
 		string value = j["html"].string_value();
 
 		cout << "key" << value.size() << "@"
@@ -214,7 +215,30 @@ void test_top_sites() {
 	get_stats(sockfd);
 }
 
+void test_once() {
+	char value_buff[MAX_BUFFER_SIZE];
+	int sockfd = connectSocket();
+	put(sockfd, "Hello", "World");
+	close(sockfd);
+
+	// sockfd = connectSocket();
+	// string value = get(sockfd, "Hello");
+	// close(sockfd);
+
+	sockfd = connectSocket();
+	put(sockfd, "Hi", "Everyone");
+	close(sockfd);
+
+	// sockfd = connectSocket();
+	// value = get(sockfd, "Hi");
+	// close(sockfd);
+
+	sockfd = connectSocket();
+	get_stats(sockfd);
+}
+
 int main() {
 	cout << "client started..." << endl;
+	//test_once();
 	test_top_sites();
 }

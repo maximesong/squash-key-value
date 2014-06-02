@@ -136,8 +136,14 @@ void memory_example() {
 	cout << ResourceMonitor::getMemoryUsage() << "k" << endl;
 }
 
+void test_simple_store() {
+	SimpleStore store;
+	store.put_str("a", "b");
+	store.put_str("c", "d");
+}
 int main() {
 	write_pid();
-	memory_example();
+//	memory_example();
+	test_simple_store();
 	return 0;
 }

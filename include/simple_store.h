@@ -26,6 +26,7 @@ public:
 	 */
 	virtual int put(const char* key, const char *value, int size);
 
+	int size();
 private:
 	map<const char*, SimpleDataBlock*,
 	    std::function<bool(const char*, const char*)>> store;
