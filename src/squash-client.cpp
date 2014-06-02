@@ -14,6 +14,7 @@
 #include "protocol.h"
 #include "json11.hpp"
 #include "constants.h"
+#include "resource_monitor.h"
 
 using namespace std;
 using namespace json11;
@@ -37,11 +38,11 @@ int put(int sockfd, const char *key, int key_len,
 	head.makePackage(buff, key, value);
 
 	head.extract(check_key_buffer, check_value_buffer, buff);
-	cout << "client put: " << strlen(value) << " vs " << value_len
-	     << " vs " << strlen(check_value_buffer) << endl;
+	// cout << "client put: " << strlen(value) << " vs " << value_len
+	//      << " vs " << strlen(check_value_buffer) << endl;
 	assert(strcmp(value, check_value_buffer) == 0);
 	send(sockfd, buff, head.bufferSize(), 0);
-	cout << "BufferSize" << head.bufferSize() << endl;
+	// cout << "BufferSize" << head.bufferSize() << endl;
 	delete[] buff;
 
 	char recv_buff[RESPONSE_BUFF_SIZE];
@@ -254,9 +255,16 @@ void test_top_sites(int hot_copies = 1, int cold_copies = 1,
 			}
 		}
 	}
+	Timer timer;
+	timer.startTimer();
 	put_pairs(hot);
 	put_pairs(cold);
+	timer.stopTimer();
+	cout << "Put Time: " << timer.getTime() << endl;
+	timer.startTimer();
 	get_pairs(hot, cold, hot_rate, count);
+	timer.stopTimer();
+	cout << "Get Time: " << timer.getTime() << endl;
 	int sockfd = connectSocket();
 	get_stats(sockfd);
 	close(sockfd);
