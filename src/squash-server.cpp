@@ -58,8 +58,8 @@ int main() {
 	listen(sockfd, LISTEN_LENGTH);
 	int fd;
 
-	SimpleStore store;
-	//ComplexStore store;
+	//SimpleStore store;
+	ComplexStore store;
 
 	Head ok_head = Head::makeOk();
 	Head response_head;
