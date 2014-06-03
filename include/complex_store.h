@@ -12,12 +12,12 @@ public:
 	/**
 	 * @return the size of the value, or -1 if the value it not available
 	 */
-	virtual int get(const char* key, char *value);
+	virtual int get(const char* key, int key_size, char *value);
 
 
-	virtual int put(const char* key, const char *value) {
-		return put(key, strlen(key) + 1, value, strlen(value)+1);
-	}
+	// virtual int put(const char* key, const char *value) {
+	// 	return put(key, strlen(key) + 1, value, strlen(value)+1);
+	// }
 
 	/**
 	 * @return 0 if put is success, or -1 if not

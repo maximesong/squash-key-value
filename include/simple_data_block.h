@@ -6,13 +6,15 @@ public:
 
 	SimpleDataBlock(const char* data, int size);
 
-	~SimpleDataBlock();
+	virtual ~SimpleDataBlock();
 
 	virtual void setData(const char* data, int size);
 
-	virtual int getData(char *dest);
+	virtual int getData(char *dest) const;
 
-	virtual int getSize();
+	virtual const char *getData() const;
+
+	virtual int getSize() const;
 
 private:
 	char * m_data;

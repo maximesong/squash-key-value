@@ -35,7 +35,7 @@ public:
 	virtual int put(const char *key, int key_size, const char *value, int value_size) = 0;
 
 	virtual int put_str(const char* key, const char *value) {
-		return put(key, value, strlen(value) + 1);
+		return put_str(key, value, strlen(value) + 1);
 	};
 
 	virtual int put_str(const string &key, const string &value) {

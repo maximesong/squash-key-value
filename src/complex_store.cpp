@@ -13,7 +13,7 @@
 
 using namespace std;
 
-int ComplexStore::get(const char* key, char *value) {
+int ComplexStore::get(const char* key, int key_size, char *value) {
 	if (store.count(key)) {
 
         const char *source;

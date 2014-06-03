@@ -54,59 +54,59 @@ void compress_example() {
 
 void store_example() {
 	ComplexStore store;
-	store.put("hi", "01234vczvsfqwervcxzfadsfqwegdxczbxcvdsdfqergfdbcxbfdsafewqr");
-    store.put("a","123456xxxxxxxxxxxxxx");
-    store.put("b","234567xxxxxxxxxxxxx");
-    store.put("c","345678yyyyyyyyyyyyyyyy");
-    store.put("d","456789zzzzzzzzzzzz");
+	store.put_str("hi", "01234vczvsfqwervcxzfadsfqwegdxczbxcvdsdfqergfdbcxbfdsafewqr");
+    store.put_str("a","123456xxxxxxxxxxxxxx");
+    store.put_str("b","234567xxxxxxxxxxxxx");
+    store.put_str("c","345678yyyyyyyyyyyyyyyy");
+    store.put_str("d","456789zzzzzzzzzzzz");
 
 	char value[100];
     //sleep(5);
-	int size = store.get("hi", value);
+	int size = store.get_str("hi", value);
 	if (size > 0) {
 		value[size] = '\0';
 		cout << value << endl;
 	}
 	
 
-    //cout << store.get("h1", value) << endl;
+    //cout << store.get_str("h1", value) << endl;
     
     sleep(2);    
-	size = store.get("a", value);
+	size = store.get_str("a", value);
 	if (size > 0) {
 		value[size] = '\0';
 		cout << value << endl;
 	}
     sleep(2); 
-	size = store.get("b", value);
+	size = store.get_str("b", value);
 	if (size > 0) {
 		value[size] = '\0';
 		cout << value << endl;
 	}
     sleep(3);    
-	size = store.get("a", value);
+	size = store.get_str("a", value);
 	if (size > 0) {
 		value[size] = '\0';
 		cout << value << endl;
 	}
     
-	size = store.get("a", value);
+	size = store.get_str("a", value);
 	if (size > 0) {
 		value[size] = '\0';
 		cout << value << endl;
 	}
-	size = store.get("a", value);
+	size = store.get_str("a", value);
 	if (size > 0) {
 		value[size] = '\0';
 		cout << value << endl;
 	}
     sleep(3);    
-	size = store.get("b", value);
+	size = store.get_str("b", value);
 	if (size > 0) {
 		value[size] = '\0';
 		cout << value << endl;
 	}
-	size = store.get("hi", value);
+	size = store.get_str("hi", value);
 	if (size > 0) {
 		value[size] = '\0';
 		cout << value << endl;
@@ -157,7 +157,7 @@ void test_simple_store(int key_size = 1024, int value_size = MAX_VALUE_SIZE, int
 		gen_random(key, key_size);
 		gen_random(value, value_size);
 
-		store.put(key, value);
+		store.put_str(key, value);
 	}
 }
 

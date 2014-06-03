@@ -5,12 +5,12 @@ public:
 	/**
 	 * @return size of data, -1 if null.
 	 */
-	virtual int getData(char *dest) = 0;
+	virtual int getData(char *dest) const = 0;
 
 	/**
 	 * @return size of data, -1 if null.
 	 */
-	virtual int getSize() = 0;
+	virtual int getSize() const = 0;
 
 	/**
 	 * @return size of data, -1 if null.
