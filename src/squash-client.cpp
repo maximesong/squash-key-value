@@ -62,9 +62,20 @@ int get(int sockfd, const char *key, int key_len,
 	delete[] buff;
 
 	char recv_buff[RESPONSE_BUFF_SIZE];
+	int size = 0;
 	int len = recv(sockfd, recv_buff, RESPONSE_BUFF_SIZE, 0);
+	cout << "get len: " << len << endl;
 	assert(len >= 0);
-	Head recv_head = Head::from(recv_buff);
+	Head recv_head;
+	if (len != 0) {
+		recv_head = Head::from(recv_buff);
+		//assert(recv_head.getMethod() == Head::OK);
+		size += len;
+	}
+	while (len != 0 && size < head.bufferSize()) {
+		len = recv(sockfd, recv_buff + size, RESPONSE_BUFF_SIZE, 0);
+		size += len;
+	}
 	recv_head.extract(value, recv_buff);
 	return recv_head.getKeyLength();
 }
@@ -217,8 +228,11 @@ void get_pairs(const map<string, string> &hot,
 		close(sockfd);
 
 		if (value_back != value) {
+			cout << key << endl;
 			cout << "put: " << value.size() << endl;
 			cout << "get: " << value_back.size() << endl;
+			cout << "value: " << value << endl;
+			cout << "value back: " << value_back << endl;
 		}
 		assert(value_back == value);
 		--count;
