@@ -13,7 +13,7 @@
 
 using namespace std;
 
-int ComplexStore::get(const char* key, char *value) {
+int ComplexStore::get(const char* key, int key_size, char *value) {
 	if (store.count(key)) {
 
         const char *source;
@@ -62,8 +62,7 @@ int ComplexStore::get(const char* key, char *value) {
 	}
 }
 
-
-int ComplexStore::put(const char* key, const char *value, int len) {
+int ComplexStore::put(const char* key, int key_size, const char *value, int value_size) {
     info *p_info;
     p_info = &store[key];
     char compressed[SIZE]; 
