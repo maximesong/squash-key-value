@@ -72,7 +72,7 @@ int get(int sockfd, const char *key, int key_len,
 		//assert(recv_head.getMethod() == Head::OK);
 		size += len;
 	}
-	while (len != 0 && size < head.bufferSize()) {
+	while (len != 0 && size < recv_head.bufferSize()) {
 		len = recv(sockfd, recv_buff + size, RESPONSE_BUFF_SIZE, 0);
 		size += len;
 	}
