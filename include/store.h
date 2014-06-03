@@ -19,14 +19,18 @@ public:
 	virtual int get_str(const char *key, char *dest) {
 		return get(key, strlen(key + 1), dest);
 	}
-	
-	virtual string get_str(string key) {
-		int len = get_str(key.c_str(), buffer);
+
+	virtual string get_str(const char *key) {
+		int len = get_str(key, buffer);
 		if (len != -1) {
 			return string{buffer};
 		} else {
 			return string{""};
 		}
+	}
+	
+	virtual string get_str(string key) {
+		return get_str(key.c_str());
 	}
 
 	/**

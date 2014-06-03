@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <assert.h>
+
 #include "SpookyV2.h"
 #include "lz4.h"
 #include "complex_store.h"
@@ -152,18 +154,33 @@ void gen_random(char *s, const int len) {
 void test_simple_store(int key_size = 1024, int value_size = MAX_VALUE_SIZE, int count = 500) {
 	SimpleStore store;
 	for (int i = 0; i != count; ++i) {
+		cout << value_size << endl;
 		char *key = new char[key_size + 1];
 		char *value = new char[value_size + 1];
+		char *back_value = new char[value_size + 1];
 		gen_random(key, key_size);
 		gen_random(value, value_size);
-
 		store.put_str(key, value);
+		store.get_str(key, back_value);
+		assert(strcmp(value, back_value) == 0);
 	}
+}
+
+void test_simple_store0() {
+	cout << MAX_VALUE_SIZE << endl;
+	char *key = new char[1024 + 1];
+	char *value = new char[MAX_VALUE_SIZE + 1];
+	gen_random(key, 1024);
+	gen_random(value, MAX_VALUE_SIZE);
+	SimpleStore store;
+	store.put_str(key, value);
+	store.put_str("Helo", "Hi");
 }
 
 int main() {
 //	write_pid();
 //	memory_example();
-	test_simple_store();
+//	test_simple_store();
+	test_simple_store0();
 	return 0;
 }
