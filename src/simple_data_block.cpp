@@ -37,6 +37,21 @@ int SimpleDataBlock::getData(char *dest) const {
 const char *SimpleDataBlock::getData() const {
 	return m_data;
 }
+
 int SimpleDataBlock::getSize() const {
 	return m_size;
 };
+
+int SimpleDataBlock::compare(const SimpleDataBlock *b) const {
+	int a_size = getSize();
+	int b_size = b->getSize();
+	int min_size = a_size < b_size ? a_size : b_size;
+	assert(a_size >= 0);
+	assert(b_size >= 0);
+	int cmp = memcmp(getData(), b->getData(), min_size);
+	if (cmp != 0) {
+		return cmp;
+	} else {
+		return a_size - b_size;
+	}
+}

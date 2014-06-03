@@ -16,6 +16,8 @@ public:
 
 	virtual int getSize() const;
 
+	virtual int compare(const SimpleDataBlock *block) const;
+
 private:
 	char * m_data;
 	int m_size;
