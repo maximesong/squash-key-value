@@ -62,8 +62,8 @@ int main() {
 	listen(sockfd, LISTEN_LENGTH);
 	int fd;
 
-//	SimpleStore store;
-	CompressedStore store;
+	SimpleStore store;
+//	CompressedStore store;
 	//ComplexStore store;
 
 	Head ok_head = Head::makeOk();
