@@ -1,7 +1,7 @@
 #include "simple_data_block.h"
 
-#include <string.h>
 #include <assert.h>
+#include <string.h>
 
 SimpleDataBlock::SimpleDataBlock() {
 	m_data = 0;
@@ -29,8 +29,8 @@ void SimpleDataBlock::setData(const char* data, int size) {
 }
 
 int SimpleDataBlock::getData(char *dest) const {
-	if (m_data != 0)
-		memcpy(dest, m_data, m_size);
+	assert(m_data != 0);
+	memcpy(dest, m_data, m_size);
 	return m_size;
 }
 

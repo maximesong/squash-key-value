@@ -11,6 +11,7 @@
 
 #include "protocol.h"
 #include "simple_store.h"
+#include "compressed_store.h"
 #include "complex_store.h"
 #include "resource_monitor.h"
 #include "constants.h"
@@ -61,7 +62,8 @@ int main() {
 	listen(sockfd, LISTEN_LENGTH);
 	int fd;
 
-	SimpleStore store;
+//	SimpleStore store;
+	CompressedStore store;
 	//ComplexStore store;
 
 	Head ok_head = Head::makeOk();

@@ -1,19 +1,14 @@
-#ifndef SIMPLE_STORE_H
-#define SIMPLE_STORE_H
+#include "store.h"
 
 #include <map>
 #include <functional>
+#include "compressed_data_block.h"
 
-#include "store.h"
-#include "simple_data_block.h"
-
-using namespace std;
-
-class SimpleStore : public Store {
+class CompressedStore : public Store {
 public:
-	SimpleStore();
-	
-	virtual ~SimpleStore();
+	CompressedStore();
+
+	virtual ~CompressedStore();
 
 	/**
 	 * @return the size of the value, or -1 if the value it not available
@@ -26,9 +21,8 @@ public:
 	virtual int put(const char* key, int key_size, const char *value, int value_size);
 
 	virtual int size();
+
 private:
-	map<SimpleDataBlock*, SimpleDataBlock*,
+	map<SimpleDataBlock*, CompressedDataBlock*,
 	    std::function<bool(const SimpleDataBlock*, const SimpleDataBlock*)>> store;
 };
-
-#endif

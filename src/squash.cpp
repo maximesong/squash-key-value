@@ -7,6 +7,7 @@
 
 #include "SpookyV2.h"
 #include "lz4.h"
+#include "compressed_store.h"
 #include "complex_store.h"
 #include "simple_store.h"
 #include "resource_monitor.h"
@@ -152,7 +153,8 @@ void gen_random(char *s, const int len) {
 }
 
 void test_simple_store(int key_size = 1024, int value_size = MAX_VALUE_SIZE, int count = 500) {
-	SimpleStore store;
+	//SimpleStore store;
+	CompressedStore store;
 	for (int i = 0; i != count; ++i) {
 		cout << "i = " << i << endl;
 		char *key = new char[key_size + 1];
@@ -186,6 +188,6 @@ int main() {
 //	write_pid();
 //	memory_example();
 //	test_simple_store();
-	test_simple_store(5);
+	test_simple_store();
 	return 0;
 }
