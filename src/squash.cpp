@@ -173,14 +173,15 @@ void test_simple_store0() {
 	gen_random(key, 1024);
 	gen_random(value, MAX_VALUE_SIZE);
 	SimpleStore store;
-	store.put_str(key, value);
 	store.put_str("Helo", "Hi");
+	string r = store.get_str("Helo");
+	cout << r << endl;
 }
 
 int main() {
 //	write_pid();
 //	memory_example();
 //	test_simple_store();
-	test_simple_store0();
+	test_simple_store();
 	return 0;
 }

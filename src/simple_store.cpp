@@ -50,9 +50,7 @@ int SimpleStore::get(const char* key, int key_size, char *dest) {
 
 
 int SimpleStore::put(const char* key, int key_size, const char *value, int value_size) {
-	cout << "key block" << endl;
 	SimpleDataBlock *key_block = new SimpleDataBlock{key, key_size};
-	cout << "key block end" << endl;
 	if (store.count(key_block)) {
 		store[key_block]->setData(value, value_size);
 		delete key_block;

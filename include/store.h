@@ -17,7 +17,7 @@ public:
 	virtual int get(const char *key, int key_size, char *dest) = 0;
 
 	virtual int get_str(const char *key, char *dest) {
-		return get(key, strlen(key + 1), dest);
+		return get(key, strlen(key) + 1, dest);
 	}
 
 	virtual string get_str(const char *key) {
