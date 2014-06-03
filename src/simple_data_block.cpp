@@ -8,7 +8,8 @@ SimpleDataBlock::SimpleDataBlock() {
 	m_size = -1;
 }
 
-SimpleDataBlock::SimpleDataBlock(const char* data, int size) {
+SimpleDataBlock::SimpleDataBlock(const char* data, int size)
+	: SimpleDataBlock() {
 	setData(data, size);
 }
 
