@@ -1,14 +1,15 @@
 #include <functional>
 #include <list>
 #include <string.h>
-#include <tr1/unordered_map>
-#define hash_map std::tr1::unordered_map
+#include <map>
 #include "store.h"
+#include "simple_data_block.h"
 
 using namespace std;
 
 class ComplexStore : public Store {
 public:
+    ComplexStore();
 	/**
 	 * @return the size of the value, or -1 if the value it not available
 	 */
@@ -39,8 +40,8 @@ private:
         char *value;
     } info;
 
-    hash_map<const char*, info> store;
+    map<SimpleDataBlock*, info,std::function<bool(const SimpleDataBlock*, const SimpleDataBlock*)>> store;
 
     unsigned long long last_compressed_time = 0;
-    list<const char*> hot_list;
+    list<SimpleDataBlock*> hot_list;
 };

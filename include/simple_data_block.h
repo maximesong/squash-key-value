@@ -1,3 +1,6 @@
+#ifndef SIMPLE_DATA_BLOCK_H
+#define SIMPLE_DATA_BLOCK_H
+
 #include "data_block.h"
 
 class SimpleDataBlock : public DataBlock {
@@ -22,3 +25,5 @@ private:
 	char * m_data;
 	int m_size;
 };
+
+#endif

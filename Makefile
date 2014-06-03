@@ -6,7 +6,7 @@ INCLUDE_DIR=include
 
 INCLUDE_FLAGS=-I $(LIB_INCLUDE_DIR) -I $(INCLUDE_DIR)
 
-CPP_FLAGS=-std=c++11
+CPP_FLAGS=-std=c++11 -g
 
 PROGRAM=squash
 
