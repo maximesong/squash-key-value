@@ -154,7 +154,7 @@ void gen_random(char *s, const int len) {
 void test_simple_store(int key_size = 1024, int value_size = MAX_VALUE_SIZE, int count = 500) {
 	SimpleStore store;
 	for (int i = 0; i != count; ++i) {
-		cout << value_size << endl;
+		cout << "i = " << i << endl;
 		char *key = new char[key_size + 1];
 		char *value = new char[value_size + 1];
 		char *back_value = new char[value_size + 1];
@@ -162,12 +162,16 @@ void test_simple_store(int key_size = 1024, int value_size = MAX_VALUE_SIZE, int
 		gen_random(value, value_size);
 		store.put_str(key, value);
 		store.get_str(key, back_value);
+		if (strcmp(value, back_value) != 0) {
+			cout << "key: " << key << endl;
+			cout << "vsize: " << strlen(value) << endl
+			     << "bsize: " << strlen(back_value) << endl;
+		}
 		assert(strcmp(value, back_value) == 0);
 	}
 }
 
 void test_simple_store0() {
-	cout << MAX_VALUE_SIZE << endl;
 	char *key = new char[1024 + 1];
 	char *value = new char[MAX_VALUE_SIZE + 1];
 	gen_random(key, 1024);
@@ -182,6 +186,6 @@ int main() {
 //	write_pid();
 //	memory_example();
 //	test_simple_store();
-	test_simple_store();
+	test_simple_store(5);
 	return 0;
 }
