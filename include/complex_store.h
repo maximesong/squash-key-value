@@ -37,6 +37,7 @@ private:
         double temp;
         unsigned long long last_atime;
         int compressed_size;
+        int size;
         char *value;
     } info;
 

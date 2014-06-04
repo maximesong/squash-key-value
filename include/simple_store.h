@@ -3,7 +3,6 @@
 
 #include <map>
 #include <functional>
-#include <string.h>
 
 #include "store.h"
 #include "simple_data_block.h"
@@ -26,7 +25,7 @@ public:
 	 */
 	virtual int put(const char* key, int key_size, const char *value, int value_size);
 
-	int size();
+	virtual int size();
 private:
 	map<SimpleDataBlock*, SimpleDataBlock*,
 	    std::function<bool(const SimpleDataBlock*, const SimpleDataBlock*)>> store;

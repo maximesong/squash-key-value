@@ -27,23 +27,23 @@ int ComplexStore::get(const char* key, int key_size, char *value) {
 
         const char *source;
 
+        int size = store[key_block].size;
+
         if(store[key_block].compressed == true){
-            cout<<"decompressing..."<<endl;
+           // cout<<"decompressing..."<<endl;
             char decompressed[SIZE];
             int compressed_size = store[key_block].compressed_size;
-	        int decompressed_size = LZ4_decompress_safe(store[key_block].value, decompressed,compressed_size,SIZE);
+	        int decompressed_size = LZ4_decompress_safe(store[key_block].value, decompressed,compressed_size,size);
          //   cout<<"compressed_size:"<<compressed_size<<endl;
            // cout<<"decompressed_size:"<<decompressed_size<<endl;
             delete [] store[key_block].value;
-            store[key_block].value = new char[decompressed_size+1];
-            decompressed[decompressed_size] = '\0';
-            memcpy(store[key_block].value, decompressed, decompressed_size);
-            store[key_block].value[decompressed_size] = '\0';
+            
+            store[key_block].value = new char[size];
+            memcpy(store[key_block].value, decompressed, store[key_block].size);
             store[key_block].compressed = false;
             hot_list.push_front(key_block);
         }
 		source = store[key_block].value;
-		int size = strlen(source);
 		memcpy(value, source, size);		
 
         //calc current temperature
@@ -59,7 +59,7 @@ int ComplexStore::get(const char* key, int key_size, char *value) {
             last_compressed_time = this->getTime();
         }else{
             int during_time = (this->getTime() - last_compressed_time)/1000;
-            cout<<"during_time:"<<during_time<<endl;
+           // cout<<"during_time:"<<during_time<<endl;
             if (during_time > CHECK_TIME){
                 this->compressing();
                 last_compressed_time = this->getTime();
@@ -77,7 +77,7 @@ int ComplexStore::put(const char* key, int key_size, const char *value, int valu
     
     char compressed[SIZE]; 
     //cout<<"raw_value="<<value<<endl;
-    int source_size = strlen(value);
+    int source_size = value_size;
     int compressed_size = LZ4_compress(value, compressed, source_size);
 
     if(store.count(key_block)){
@@ -89,8 +89,9 @@ int ComplexStore::put(const char* key, int key_size, const char *value, int valu
         delete [] (*p_info).value;
         (*p_info).value = new char[compressed_size];
         memcpy((*p_info).value,compressed,compressed_size);
-       (*p_info).compressed_size = compressed_size;
-        cout<<"p_info"<<endl;
+        (*p_info).compressed_size = compressed_size;
+        (*p_info).size = value_size;
+       // cout<<"p_info"<<endl;
     }else{
         info new_info;
         new_info.compressed = true;
@@ -98,9 +99,10 @@ int ComplexStore::put(const char* key, int key_size, const char *value, int valu
         new_info.last_atime =  this->getTime();
         new_info.value = new char[compressed_size];
         memcpy(new_info.value, compressed, compressed_size);
+        new_info.size = value_size;
         new_info.compressed_size = compressed_size;
 	    store[key_block] = new_info;
-        cout<<"new_info"<<endl;
+       // cout<<"new_info"<<endl;
     }
 	return 0;
 }
@@ -128,11 +130,11 @@ void ComplexStore::compressing(void){
             store[key_block].last_atime = this->getTime();
             store[key_block].temp = INITIAL_TEMP;
             char compressed[SIZE];
-            cout<<store[key_block].value<<endl;
+            //cout<<store[key_block].value<<endl;
             char *value = store[key_block].value;
-            cout<<value<<endl;
-            int source_size = strlen(value);
-            cout<<source_size<<endl;
+            //cout<<value<<endl;
+            int source_size = store[key_block].size;
+            //cout<<source_size<<endl;
             int compressed_size = LZ4_compress(value, compressed, source_size);
          //   cout<<"compressed text: "<<compressed<<endl;
             delete [] store[key_block].value;

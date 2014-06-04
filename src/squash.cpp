@@ -7,13 +7,37 @@
 
 #include "SpookyV2.h"
 #include "lz4.h"
+#include "json11.hpp"
+
+#include "compressed_store.h"
 #include "complex_store.h"
 #include "simple_store.h"
 #include "resource_monitor.h"
 
 using namespace std;
+using namespace json11;
 
 const char *PID_FILENAME="squash.pid";
+
+string read_file(const char *filename) {
+  std::ifstream is(filename);
+  if (is) {
+    // get length of file:
+    is.seekg (0, is.end);
+    int length = is.tellg();
+    is.seekg (0, is.beg);
+
+    char * buffer = new char[length];
+    is.read (buffer,length);
+
+    is.close();
+    string result{buffer};
+
+    delete[] buffer;
+    return result;
+  }
+  return "";
+}
 
 void hash_example() {
 	cout << "##### Start Hash Example" << endl;
@@ -152,7 +176,9 @@ void gen_random(char *s, const int len) {
 }
 
 void test_simple_store(int key_size = 1024, int value_size = MAX_VALUE_SIZE, int count = 500) {
-	SimpleStore store;
+	//SimpleStore store;
+	//CompressedStore store;
+    ComplexStore store;
 	for (int i = 0; i != count; ++i) {
 		cout << "i = " << i << endl;
 		char *key = new char[key_size + 1];
@@ -182,10 +208,88 @@ void test_simple_store0() {
 	cout << r << endl;
 }
 
+void get_pairs(const map<string, string> &hot,
+	       const map<string, string> &cold,
+	       int count, double hot_rate, Store &store) {
+	while (count > 0) {
+		double r = (double) rand() / RAND_MAX;
+		string key;
+		string value;
+		if (r < hot_rate) {
+			int index = rand() % hot.size();
+			auto item = hot.begin();
+			advance(item, index);
+			key = item->first;
+			value = item->second;
+		} else {
+			int index = rand() % cold.size();
+			auto item = cold.begin();
+			advance(item, index);
+			key = item->first;
+			value = item->second;
+		}
+		string value_back = store.get_str(key);
+
+		if (value_back != value) {
+			cout << "put: " << value.size() << endl;
+			cout << "get: " << value_back.size() << endl;
+		}
+		assert(value_back == value);
+		--count;
+	}
+}
+
+void test_top_sites(int hot_copies = 1, int cold_copies = 1,
+		    double hot_rate = 0.5, int count = 1000) {
+	SimpleStore store;
+        // max value length: 289208
+	string text = read_file("tools/sites.json");
+	string error;
+	Json parsed = Json::parse(text, error);
+	assert(parsed.is_array());
+	Json::array arr = parsed.array_items();
+
+	map<string, string> hot;
+	map<string, string> cold;
+	for (Json j : arr) {
+		assert(j.is_object());
+		string key = j["site"].string_value();
+		string value = j["html"].string_value();
+		if (hot_copies == 1) {
+			hot[key] = value;
+		} else {
+			for (int i = 0; i != hot_copies; ++i) {
+				hot[key + "@" + to_string(i + 1)] = value;
+			}
+		}
+		if (cold_copies == 1) {
+			cold[key] = value;
+		} else {
+			for (int i = 0; i != cold_copies; ++i) {
+				cold[key + "@" + to_string(i + 1)] = value;
+			}
+		}
+	}
+	Timer timer;
+	timer.startTimer();
+	for (auto e : hot) {
+		store.put_str(e.first, e.second);
+	}
+	for (auto e: cold) {
+		store.put_str(e.first, e.second);
+	}
+	timer.stopTimer();
+	cout << "Put Time: " << timer.getTime() << endl;
+	timer.startTimer();
+	get_pairs(hot, cold, hot_rate, count, store);
+	timer.stopTimer();
+	cout << "Get Time: " << timer.getTime() << endl;
+}
+
 int main() {
 //	write_pid();
 //	memory_example();
 //	test_simple_store();
-	test_simple_store(5);
+	test_simple_store();
 	return 0;
 }

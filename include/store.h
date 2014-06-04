@@ -2,6 +2,7 @@
 #define STORE_H
 
 #include <string>
+#include <string.h>
 
 #include "constants.h"
 
