@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <time.h>
+#include <math.h>
 #include <netinet/in.h>
 #include <unistd.h>
 
@@ -284,6 +285,48 @@ void test_top_sites(int hot_copies = 1, int cold_copies = 1,
 	close(sockfd);
 }
 
+
+void test_hot_sites(int copies = 1, double hot_ratio = 0.2, double hot_rate = 0.8, int get_count = 1000) {
+        // max value length: 289208
+	string text = read_file("tools/sites.json");
+	string error;
+	Json parsed = Json::parse(text, error);
+	assert(parsed.is_array());
+	Json::array arr = parsed.array_items();
+
+	map<string, string> hot;
+	map<string, string> cold;
+	int hot_count = (int) floor(arr.size() * hot_ratio);
+	for (int k = 0; k != copies; ++k) {
+		for (int i = 0; i != hot_count; ++i) {
+			Json j = arr[i];
+			string key = j["site"].string_value() + "@" + to_string(k + 1);
+			string value = j["html"].string_value();
+			hot[key] = value;
+		}
+		for (int i = hot_count; i != arr.size(); ++i) {
+			Json j = arr[i];
+			string key = j["site"].string_value() + "@" + to_string(k + 1);
+			string value = j["html"].string_value();
+			cold[key] = value;
+		}
+	}
+	Timer timer;
+	timer.startTimer();
+	put_pairs(hot);
+	put_pairs(cold);
+	timer.stopTimer();
+	cout << "Put Time: " << timer.getTime() << " s" << endl;
+	timer.startTimer();
+	get_pairs(hot, cold, hot_rate, get_count);
+	timer.stopTimer();
+	cout << "Get Time: " << timer.getTime() << " s" << endl;
+	int sockfd = connectSocket();
+	get_stats(sockfd);
+	close(sockfd);
+}
+
+
 void test_once() {
 	char value_buff[MAX_BUFFER_SIZE];
 	int sockfd = connectSocket();
@@ -309,8 +352,8 @@ void test_once() {
 int main(int argc, char **argv) {
 	cout << "Client started..." << endl;
 	if (argc == 1) {
-		test_random();
-		//test_top_sites();
+		//test_random();
+		test_hot_sites(10, 0.2, 0.8, 100000);
 	} else if (argc == 4) {
 		int copies = stoi(string{argv[1]});
 		double rate = stod(string{argv[2]});
