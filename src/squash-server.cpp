@@ -63,9 +63,9 @@ int main() {
 	listen(sockfd, LISTEN_LENGTH);
 	int fd;
 
-//	SimpleStore store;
+	SimpleStore store;
 //	CompressedStore store;
-	HighlyCompressedStore store;
+	//HighlyCompressedStore store;
 	//ComplexStore store;
 
 	Head ok_head = Head::makeOk();
@@ -89,7 +89,7 @@ int main() {
 			switch(head.getMethod()) {
 			case Head::PUT:
 				head.extract(key, value, buff);
-				cout << "Put Size: " << head.getValueLength() << endl;
+			//	cout << "Put Size: " << head.getValueLength() << endl;
 				store.put(key, head.getKeyLength(), value, head.getValueLength());
 				ok_head = Head::makeOk();
 				ok_head.makePackage(buff);

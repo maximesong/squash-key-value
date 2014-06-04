@@ -177,7 +177,8 @@ void gen_random(char *s, const int len) {
 
 void test_simple_store(int key_size = 1024, int value_size = MAX_VALUE_SIZE, int count = 500) {
 	//SimpleStore store;
-	CompressedStore store;
+	//CompressedStore store;
+    ComplexStore store;
 	for (int i = 0; i != count; ++i) {
 		cout << "i = " << i << endl;
 		char *key = new char[key_size + 1];
