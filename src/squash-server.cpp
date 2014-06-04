@@ -12,6 +12,7 @@
 #include "protocol.h"
 #include "simple_store.h"
 #include "compressed_store.h"
+#include "highly_compressed_store.h"
 #include "complex_store.h"
 #include "resource_monitor.h"
 #include "constants.h"
@@ -63,7 +64,8 @@ int main() {
 	int fd;
 
 //	SimpleStore store;
-	CompressedStore store;
+//	CompressedStore store;
+	HighlyCompressedStore store;
 	//ComplexStore store;
 
 	Head ok_head = Head::makeOk();
