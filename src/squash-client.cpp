@@ -206,7 +206,7 @@ void put_pairs(const map<string, string> pairs) {
 
 void get_pairs(const map<string, string> &hot,
 	       const map<string, string> &cold,
-	       int count, double hot_rate) {
+	       double hot_rate, int count) {
 	while (count > 0) {
 		int sockfd = connectSocket();
 		double r = (double) rand() / RAND_MAX;
