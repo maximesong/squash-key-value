@@ -12,6 +12,7 @@
 #include "protocol.h"
 #include "simple_store.h"
 #include "compressed_store.h"
+#include "highly_compressed_store.h"
 #include "complex_store.h"
 #include "resource_monitor.h"
 #include "constants.h"
@@ -62,9 +63,10 @@ int main() {
 	listen(sockfd, LISTEN_LENGTH);
 	int fd;
 
-    //SimpleStore store;
-	//CompressedStore store;
-	ComplexStore store;
+	SimpleStore store;
+//	CompressedStore store;
+	//HighlyCompressedStore store;
+	//ComplexStore store;
 
 	Head ok_head = Head::makeOk();
 	Head response_head;
@@ -87,7 +89,7 @@ int main() {
 			switch(head.getMethod()) {
 			case Head::PUT:
 				head.extract(key, value, buff);
-				cout << "Put Size: " << head.getValueLength() << endl;
+			//	cout << "Put Size: " << head.getValueLength() << endl;
 				store.put(key, head.getKeyLength(), value, head.getValueLength());
 				ok_head = Head::makeOk();
 				ok_head.makePackage(buff);

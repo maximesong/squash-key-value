@@ -64,7 +64,7 @@ int get(int sockfd, const char *key, int key_len,
 	char recv_buff[RESPONSE_BUFF_SIZE];
 	int size = 0;
 	int len = recv(sockfd, recv_buff, RESPONSE_BUFF_SIZE, 0);
-	cout << "get len: " << len << endl;
+	//cout << "get len: " << len << endl;
 	assert(len >= 0);
 	Head recv_head;
 	if (len != 0) {
