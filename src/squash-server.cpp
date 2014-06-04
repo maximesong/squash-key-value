@@ -131,6 +131,7 @@ int main() {
 				     response_head.bufferSize(),
 				     0);
 				close(fd);
+				return 0;
 				break;
 			default:
 				cout << "Unknown" << endl;
