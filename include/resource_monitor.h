@@ -1,7 +1,7 @@
 #ifndef _RESOURCE_MONITOR_H_
 #define _RESOURCE_MONITOR_H_
 
-#include <time.h>
+#include <sys/time.h>
 
 #include <iostream>
 
@@ -18,19 +18,24 @@ public:
 class Timer {
 public:	
 	void startTimer() {
-		start_time = clock();
+		start_time = getCurrentTime();
 	}
 
 	void stopTimer() {
-		end_time = clock();
+		end_time = getCurrentTime();
 	}
 
 	double getTime() {
-		return (double (end_time - start_time)) / CLOCKS_PER_SEC ;
+		return (end_time - start_time) / 1000;
 	}
 private:
-	clock_t start_time;
-	clock_t end_time;
+	double getCurrentTime(){
+		struct timeval tp;
+		gettimeofday(&tp, NULL);
+		return (double) (tp.tv_sec * 1000 + tp.tv_usec / 1000);
+	}
+	double start_time;
+	double end_time;
 };
 
 
