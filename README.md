@@ -60,7 +60,9 @@ squash-key-value
 
 # 项目运行
 
-- 项目依赖: 安装clang++
+- 获取项目源代码: https://github.com/mfight/squash-key-value
+
+- 安装项目依赖: 安装clang++
 
 - 选择编译的Store类型: 修改src/下squash-server.cpp, squash.cpp中Store的具体实例化类型，可供选择的有SimpleStore, ComplexStore, CompressedStore, HighlyCompressedStore, WorkSetStore
 
@@ -91,6 +93,7 @@ private:
 	uint32_t m_method;
 	uint32_t m_key_len;
 	uint32_t m_value_len;
+}
 ```
 
 # Store接口
