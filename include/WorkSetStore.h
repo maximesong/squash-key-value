@@ -17,6 +17,8 @@ using namespace std;
 #include <string.h>
 #include "stdio.h"
 
+#include "constants.h"
+
 class WorkSetStore: public Store
 {
 public:
@@ -54,7 +56,7 @@ public:
 	int put(const char* key, int key_size, const char *value, int size)
 	{
 		std::string key_string = std::string(key, key_size);
-		assert(value[size] == '\0');
+		//assert(value[size - 1] == '\0');
 		std::string value_string = std::string(value);
 		int result = this->put(key_string,value_string);
 		return result;
@@ -209,7 +211,7 @@ public:
 	{
 		//return ("Compressed:"+contentToBeCompressed);
 		
-		char compressed[1024];
+		char compressed[MAX_BUFFER_SIZE];
 		int source_size = strlen(contentToBeCompressed.c_str());
 		int compressed_size = LZ4_compress(contentToBeCompressed.c_str(), compressed, source_size);
 		compressed[compressed_size] = '\0';
@@ -222,10 +224,10 @@ public:
 	{
 		//return contentToBeDecompressed.substr(11);
 		
-		char decompressed[1024];
+		char decompressed[MAX_BUFFER_SIZE];
 		int compressed_size = strlen(contentToBeDecompressed.c_str());
 		int decompressed_size = LZ4_decompress_safe(contentToBeDecompressed.c_str(), decompressed,
-								    compressed_size, 1024);
+								    compressed_size, MAX_BUFFER_SIZE);
 		decompressed[decompressed_size] = '\0';
 		return (std::string(decompressed));
 		
