@@ -55,4 +55,4 @@ squash-server.o: src/squash-server.cpp
 	$(CXX) $(INCLUDE_FLAGS) $(CPP_FLAGS) -c $< -o $@
 
 clean:
-	rm -f $(PROGRAM) *.o
+	rm -f $(PROGRAM) client server *.o *.a *~ src/*~ include/*~
