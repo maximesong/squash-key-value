@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <time.h>
+#include <math.h>
 #include <netinet/in.h>
 #include <unistd.h>
 
@@ -62,9 +63,20 @@ int get(int sockfd, const char *key, int key_len,
 	delete[] buff;
 
 	char recv_buff[RESPONSE_BUFF_SIZE];
+	int size = 0;
 	int len = recv(sockfd, recv_buff, RESPONSE_BUFF_SIZE, 0);
+	//cout << "get len: " << len << endl;
 	assert(len >= 0);
-	Head recv_head = Head::from(recv_buff);
+	Head recv_head;
+	if (len != 0) {
+		recv_head = Head::from(recv_buff);
+		//assert(recv_head.getMethod() == Head::OK);
+		size += len;
+	}
+	while (len != 0 && size < recv_head.bufferSize()) {
+		len = recv(sockfd, recv_buff + size, RESPONSE_BUFF_SIZE, 0);
+		size += len;
+	}
 	recv_head.extract(value, recv_buff);
 	return recv_head.getKeyLength();
 }
@@ -194,7 +206,7 @@ void put_pairs(const map<string, string> pairs) {
 
 void get_pairs(const map<string, string> &hot,
 	       const map<string, string> &cold,
-	       int count, double hot_rate) {
+	       double hot_rate, int count) {
 	while (count > 0) {
 		int sockfd = connectSocket();
 		double r = (double) rand() / RAND_MAX;
@@ -217,8 +229,11 @@ void get_pairs(const map<string, string> &hot,
 		close(sockfd);
 
 		if (value_back != value) {
+			cout << key << endl;
 			cout << "put: " << value.size() << endl;
 			cout << "get: " << value_back.size() << endl;
+			cout << "value: " << value << endl;
+			cout << "value back: " << value_back << endl;
 		}
 		assert(value_back == value);
 		--count;
@@ -270,6 +285,48 @@ void test_top_sites(int hot_copies = 1, int cold_copies = 1,
 	close(sockfd);
 }
 
+
+void test_hot_sites(int copies = 1, double hot_ratio = 0.2, double hot_rate = 0.8, int get_count = 1000) {
+        // max value length: 289208
+	string text = read_file("tools/sites.json");
+	string error;
+	Json parsed = Json::parse(text, error);
+	assert(parsed.is_array());
+	Json::array arr = parsed.array_items();
+
+	map<string, string> hot;
+	map<string, string> cold;
+	int hot_count = (int) floor(arr.size() * hot_ratio);
+	for (int k = 0; k != copies; ++k) {
+		for (int i = 0; i != hot_count; ++i) {
+			Json j = arr[i];
+			string key = j["site"].string_value() + "@" + to_string(k + 1);
+			string value = j["html"].string_value();
+			hot[key] = value;
+		}
+		for (int i = hot_count; i != arr.size(); ++i) {
+			Json j = arr[i];
+			string key = j["site"].string_value() + "@" + to_string(k + 1);
+			string value = j["html"].string_value();
+			cold[key] = value;
+		}
+	}
+	Timer timer;
+	timer.startTimer();
+	put_pairs(hot);
+	put_pairs(cold);
+	timer.stopTimer();
+	cout << "Put Time: " << timer.getTime() << " s" << endl;
+	timer.startTimer();
+	get_pairs(hot, cold, hot_rate, get_count);
+	timer.stopTimer();
+	cout << "Get Time: " << timer.getTime() << " s" << endl;
+	int sockfd = connectSocket();
+	get_stats(sockfd);
+	close(sockfd);
+}
+
+
 void test_once() {
 	char value_buff[MAX_BUFFER_SIZE];
 	int sockfd = connectSocket();
@@ -295,8 +352,8 @@ void test_once() {
 int main(int argc, char **argv) {
 	cout << "Client started..." << endl;
 	if (argc == 1) {
-		test_random();
-		//test_top_sites();
+		//test_random();
+		test_hot_sites(10, 0.2, 0.8, 100000);
 	} else if (argc == 4) {
 		int copies = stoi(string{argv[1]});
 		double rate = stod(string{argv[2]});

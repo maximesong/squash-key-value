@@ -11,6 +11,9 @@
 
 #include "protocol.h"
 #include "simple_store.h"
+#include "compressed_store.h"
+#include "WorkSetStore.h"
+#include "highly_compressed_store.h"
 #include "complex_store.h"
 #include "resource_monitor.h"
 #include "constants.h"
@@ -61,7 +64,10 @@ int main() {
 	listen(sockfd, LISTEN_LENGTH);
 	int fd;
 
-	SimpleStore store;
+//	SimpleStore store;
+        WorkSetStore store;
+//	CompressedStore store;
+	//HighlyCompressedStore store;
 	//ComplexStore store;
 
 	Head ok_head = Head::makeOk();
@@ -79,17 +85,13 @@ int main() {
 		}
 		while (len != 0 && size < head.bufferSize()) {
 			len = recv(fd, buff + size, MAX_BUFFER_SIZE, 0);
-			cout << "Server len: " << len << endl;
 			size += len;
 		}
-		cout << "Out of receive loop" << endl;
 		if (size >= 0) {
-			cout << "Server size: " <<  size << endl;
 			switch(head.getMethod()) {
 			case Head::PUT:
 				head.extract(key, value, buff);
-				cout << "Put Size: " << head.getValueLength()
-				     << "&" << strlen(value) << endl;
+			//	cout << "Put Size: " << head.getValueLength() << endl;
 				store.put(key, head.getKeyLength(), value, head.getValueLength());
 				ok_head = Head::makeOk();
 				ok_head.makePackage(buff);
@@ -98,8 +100,6 @@ int main() {
 				break;
 			case Head::GET:
 				head.extract(key, buff);
-				cout << "Get Key: " <<
-					key << endl;
 				value_len = store.get_str(key, value);
 				if (value_len >= 0) {
 					response_head = 
